@@ -234,9 +234,13 @@ function mergeCluster(
   const proposal = grouping.proposal?.(cluster.length, prefix);
   if (proposal) merged.proposal = proposal;
 
-  const acceptance = cluster
-    .flatMap((finding) => finding.acceptance ?? [])
-    .slice(0, 5);
+  // Deduplicated, because a cluster is by definition the same rule firing on
+  // several screens and most rules phrase their criteria without naming one.
+  // Collecting them verbatim produced a checklist with the same line on it
+  // five times, which reads as a broken export rather than as five screens.
+  const acceptance = [
+    ...new Set(cluster.flatMap((finding) => finding.acceptance ?? [])),
+  ].slice(0, 5);
   if (acceptance.length > 0) merged.acceptance = acceptance;
 
   return merged;

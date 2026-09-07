@@ -540,6 +540,46 @@ describe("engine deduplication", () => {
     expect(refs).toContain("/portal/d");
   });
 
+  test("a grouped finding does not repeat one criterion per member", () => {
+    // Most rules phrase acceptance criteria without naming a route, so every
+    // member of a cluster contributes the same sentence. Collecting them
+    // verbatim produced an exported checklist with the same box on it five
+    // times, which reads as a broken ticket rather than as five screens.
+    const cluster = ["/portal/a", "/portal/b", "/portal/c", "/portal/d"].map(
+      (route, index): Finding => ({
+        ...base,
+        target: { kind: "node", node: `screen.${index}`, route },
+        acceptance: ["The screen explains the failure and offers a retry."],
+      }),
+    );
+
+    const result = runRules([ruleEmitting(cluster, true)], {
+      view: emptyView,
+      entryPoints: [],
+    });
+
+    expect(result.findings[0]!.acceptance).toEqual([
+      "The screen explains the failure and offers a retry.",
+    ]);
+  });
+
+  test("a grouped finding keeps criteria that genuinely differ", () => {
+    const cluster = ["/portal/a", "/portal/b", "/portal/c"].map(
+      (route, index): Finding => ({
+        ...base,
+        target: { kind: "node", node: `screen.${index}`, route },
+        acceptance: [`${route} explains the failure.`],
+      }),
+    );
+
+    const result = runRules([ruleEmitting(cluster, true)], {
+      view: emptyView,
+      entryPoints: [],
+    });
+
+    expect(result.findings[0]!.acceptance).toHaveLength(3);
+  });
+
   test("a group below the threshold stays as individual findings", () => {
     const cluster = ["/portal/a", "/portal/b"].map(
       (route, index): Finding => ({

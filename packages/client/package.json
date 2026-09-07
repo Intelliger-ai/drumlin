@@ -1,0 +1,16 @@
+{
+  "name": "@drumlin/client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Daemon client: RemoteEngine over the socket, with auto-spawn and in-process fallback.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@drumlin/daemon": "workspace:*",
+    "@drumlin/engine": "workspace:*",
+    "@drumlin/protocol": "workspace:*",
+    "@drumlin/repo": "workspace:*"
+  }
+}

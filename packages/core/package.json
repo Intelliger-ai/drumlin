@@ -1,0 +1,13 @@
+{
+  "name": "@drumlin/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Graph algorithms, rule engine, issue state machine. Pure: no filesystem, no parser, no IO.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@drumlin/model": "workspace:*"
+  }
+}

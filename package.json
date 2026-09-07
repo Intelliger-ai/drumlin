@@ -1,0 +1,34 @@
+{
+  "name": "drumlin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-first UX intelligence layer for AI-assisted development",
+  "packageManager": "pnpm@10.30.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "drumlin": "tsx apps/cli/src/main.ts",
+    "drumlind": "tsx apps/daemon/src/main.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "boundaries": "node scripts/check-boundaries.mjs",
+    "bench:warm": "node scripts/bench-warm.mjs",
+    "probe:mcp": "node scripts/probe-mcp.mjs",
+    "probe:hooks": "node scripts/probe-hooks.mjs",
+    "probe:loop": "node scripts/probe-loop.mjs",
+    "check": "pnpm boundaries && pnpm typecheck && pnpm test"
+  },
+  "devDependencies": {
+    "@drumlin/indexer": "workspace:*",
+    "@types/node": "^24.3.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}

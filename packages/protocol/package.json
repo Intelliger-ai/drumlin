@@ -1,0 +1,13 @@
+{
+  "name": "@drumlin/protocol",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Daemon wire protocol: NDJSON JSON-RPC 2.0 framing, handshake, event vocabulary. Pure.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@drumlin/model": "workspace:*"
+  }
+}

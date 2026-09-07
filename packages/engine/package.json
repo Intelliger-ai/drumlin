@@ -1,0 +1,16 @@
+{
+  "name": "@drumlin/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The Engine request surface and its in-process implementation. Impure: orchestrates the indexer and .drumlin/.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@drumlin/core": "workspace:*",
+    "@drumlin/indexer": "workspace:*",
+    "@drumlin/model": "workspace:*",
+    "@drumlin/repo": "workspace:*"
+  }
+}

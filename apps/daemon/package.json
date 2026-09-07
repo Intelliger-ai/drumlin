@@ -1,0 +1,23 @@
+{
+  "name": "@drumlin/daemon",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "drumlind — the long-lived process that holds the warm graph.",
+  "bin": {
+    "drumlind": "./bin/drumlind.mjs"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./bin": "./bin/drumlind.mjs",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@drumlin/core": "workspace:*",
+    "@drumlin/engine": "workspace:*",
+    "@drumlin/indexer": "workspace:*",
+    "@drumlin/model": "workspace:*",
+    "@drumlin/protocol": "workspace:*",
+    "@drumlin/repo": "workspace:*"
+  }
+}

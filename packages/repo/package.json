@@ -1,0 +1,14 @@
+{
+  "name": "@drumlin/repo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": ".drumlin/ artifact read-write plus the disposable SQLite cache. Impure.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@drumlin/model": "workspace:*",
+    "yaml": "^2.8.1"
+  }
+}

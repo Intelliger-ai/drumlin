@@ -1,0 +1,21 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+
+# Local derived state — rebuildable from repo + source, never committed.
+*.db
+*.db-journal
+.drumlin/generated/
+
+# Local scratch
+.vitest/
+coverage/
+
+# Design notes and source material, kept out of the public repository.
+# These are working documents, not documentation: the decision records explain
+# choices that are still being revised, and Context/ is raw input rather than
+# anything written to be read. Back them up somewhere private — a git remote
+# that is not this one — because nothing here versions them.
+vault/
+Context/

@@ -1,0 +1,15 @@
+{
+  "name": "@drumlin/indexer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Next.js and React extraction into UX Graph IR. Impure: reads source via ts-morph.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./paths": "./src/discover.ts"
+  },
+  "dependencies": {
+    "@drumlin/model": "workspace:*",
+    "ts-morph": "^24.0.0"
+  }
+}

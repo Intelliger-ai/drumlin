@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "layer": "expected",
+  "nodes": [
+    { "id": "screen.root", "type": "Screen", "route": "/", "router": "app" },
+    {
+      "id": "screen.invoices",
+      "type": "Screen",
+      "route": "/invoices",
+      "router": "app",
+      "context": { "async": true }
+    },
+    {
+      "id": "screen.invoices.id",
+      "type": "Screen",
+      "route": "/invoices/[id]",
+      "router": "app",
+      "context": { "async": true }
+    },
+    {
+      "id": "screen.settings",
+      "type": "Screen",
+      "route": "/settings",
+      "router": "app"
+    },
+    {
+      "id": "screen.reports",
+      "type": "Screen",
+      "route": "/reports",
+      "router": "app",
+      "context": { "async": true }
+    },
+    {
+      "id": "screen.legacy",
+      "type": "Screen",
+      "route": "/legacy",
+      "router": "pages"
+    },
+    {
+      "id": "screen.legacy.billing",
+      "type": "Screen",
+      "route": "/legacy/billing",
+      "router": "pages",
+      "context": { "async": true }
+    },
+    {
+      "id": "state.invoices.id.loading",
+      "type": "State",
+      "stateKind": "loading"
+    },
+    { "id": "state.invoices.id.error", "type": "State", "stateKind": "error" },
+    {
+      "id": "action.approve-invoice",
+      "type": "Action",
+      "context": { "async": true }
+    },
+    {
+      "id": "action.delete-invoice",
+      "type": "Action",
+      "context": { "async": true, "destructive": true, "reversible": false }
+    }
+  ],
+  "edges": [
+    {
+      "from": "screen.root",
+      "to": "screen.invoices",
+      "type": "transitions_to"
+    },
+    {
+      "from": "screen.invoices",
+      "to": "screen.invoices.id",
+      "type": "transitions_to"
+    },
+    {
+      "from": "screen.invoices.id",
+      "to": "screen.invoices",
+      "type": "transitions_to"
+    },
+    {
+      "from": "screen.invoices.id",
+      "to": "state.invoices.id.loading",
+      "type": "contains"
+    },
+    {
+      "from": "screen.invoices.id",
+      "to": "state.invoices.id.error",
+      "type": "contains"
+    },
+    {
+      "from": "screen.invoices.id",
+      "to": "action.approve-invoice",
+      "type": "contains"
+    },
+    {
+      "from": "screen.invoices.id",
+      "to": "action.delete-invoice",
+      "type": "contains"
+    },
+    {
+      "from": "screen.legacy",
+      "to": "screen.legacy.billing",
+      "type": "transitions_to"
+    },
+    {
+      "from": "screen.legacy.billing",
+      "to": "screen.invoices",
+      "type": "transitions_to"
+    }
+  ]
+}

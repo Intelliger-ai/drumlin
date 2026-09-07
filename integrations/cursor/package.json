@@ -1,0 +1,11 @@
+{
+  "name": "@drumlin/cursor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The Drumlin plugin for Cursor: hooks, MCP declaration, and skill.",
+  "exports": {
+    ".": "./src/plugin.ts",
+    "./skill": "./skills/drumlin/SKILL.md"
+  }
+}

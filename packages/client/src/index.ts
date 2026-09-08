@@ -6,7 +6,12 @@
  * through here: the CLI, the hooks, and the MCP server.
  */
 export { DaemonConnection, type ConnectionOptions } from "./connection.js";
-export { daemonCommand, spawnDaemon, waitForSocket, type SpawnOptions } from "./spawn.js";
+export {
+  daemonCommand,
+  spawnDaemon,
+  waitForSocket,
+  type SpawnOptions,
+} from "./spawn.js";
 export {
   RemoteEngine,
   resolveEngine,

@@ -75,10 +75,13 @@ function send(method, params) {
     );
     pending.set(id, (message) => {
       clearTimeout(timer);
-      if (message.error) reject(new Error(`${method}: ${message.error.message}`));
+      if (message.error)
+        reject(new Error(`${method}: ${message.error.message}`));
       else settle(message.result);
     });
-    child.stdin.write(`${JSON.stringify({ jsonrpc: "2.0", id, method, params })}\n`);
+    child.stdin.write(
+      `${JSON.stringify({ jsonrpc: "2.0", id, method, params })}\n`,
+    );
   });
 }
 
@@ -113,7 +116,10 @@ try {
   const names = tools.map((tool) => tool.name);
   console.log(`tools/list  ${names.join(", ")}`);
 
-  if (names.length !== EXPECTED.length || !EXPECTED.every((n) => names.includes(n))) {
+  if (
+    names.length !== EXPECTED.length ||
+    !EXPECTED.every((n) => names.includes(n))
+  ) {
     fail(`expected exactly ${EXPECTED.join(", ")}`);
   }
   for (const tool of tools) {
@@ -134,7 +140,9 @@ try {
     name: "drumlin_check_changed",
     arguments: { severity: "high" },
   });
-  console.log(`changed     ${(changed.content?.[0]?.text ?? "").split("\n")[0]}`);
+  console.log(
+    `changed     ${(changed.content?.[0]?.text ?? "").split("\n")[0]}`,
+  );
 
   // An unknown route must come back as tool content, not as a protocol error:
   // the agent can act on a message and cannot act on a transport failure.
@@ -142,10 +150,15 @@ try {
     name: "drumlin_get_flow",
     arguments: { route: "/definitely-not-a-route" },
   });
-  if (!missing.isError) fail("an unknown route should be reported as a tool error");
-  console.log(`error path  ${(missing.content?.[0]?.text ?? "").split("\n")[0]}`);
+  if (!missing.isError)
+    fail("an unknown route should be reported as a tool error");
+  console.log(
+    `error path  ${(missing.content?.[0]?.text ?? "").split("\n")[0]}`,
+  );
 
-  console.log("\nok — server speaks MCP over stdio and exposes four read-only tools");
+  console.log(
+    "\nok — server speaks MCP over stdio and exposes four read-only tools",
+  );
   child.kill();
   process.exit(0);
 } catch (error) {

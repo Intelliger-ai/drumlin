@@ -17,10 +17,15 @@ const issue: Issue = {
   rule: { id: "flow.destructive.no-confirm" },
   target: { kind: "node", node: "action.delete", route: "/invoices/[id]" },
   evidence: [
-    { type: "source", ref: "delete", location: { file: "app/actions.ts", line: 12 } },
+    {
+      type: "source",
+      ref: "delete",
+      location: { file: "app/actions.ts", line: 12 },
+    },
     { type: "graph", ref: "action.delete" },
   ],
-  message: 'deleteInvoice destroys data, so a "misplaced" click is unrecoverable.',
+  message:
+    'deleteInvoice destroys data, so a "misplaced" click is unrecoverable.',
   proposal: "Confirm before running it.",
   acceptance: ["Triggering it requires confirmation."],
   detectedAt: "2026-01-01T00:00:00.000Z",

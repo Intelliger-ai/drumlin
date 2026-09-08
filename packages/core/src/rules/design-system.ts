@@ -98,7 +98,11 @@ export const selectOverload: Rule = {
 
       const collections: string[] = [];
       for (const entry of raw) {
-        if (typeof entry !== "object" || entry === null || Array.isArray(entry)) {
+        if (
+          typeof entry !== "object" ||
+          entry === null ||
+          Array.isArray(entry)
+        ) {
           continue;
         }
         const collection = (entry as Record<string, JsonValue>)["collection"];
@@ -125,7 +129,9 @@ export const selectOverload: Rule = {
         evidence,
         message: `${view.labelOf(node.id)} fills a select from ${collections
           .slice(0, 2)
-          .join(" and ")}, whose size is not knowable, with no way to search or filter.`,
+          .join(
+            " and ",
+          )}, whose size is not knowable, with no way to search or filter.`,
         proposal:
           "Use a searchable combobox, or virtualise the list, so the control stays usable at any size.",
         acceptance: [

@@ -50,10 +50,9 @@ describe("ndjson framing", () => {
     const wire =
       encodeMessage(rpcRequest(1, "a")) + encodeMessage(rpcRequest(2, "b"));
     const { messages } = new MessageDecoder().push(wire);
-    expect(messages.map((message) => (message as { method: string }).method)).toEqual([
-      "a",
-      "b",
-    ]);
+    expect(
+      messages.map((message) => (message as { method: string }).method),
+    ).toEqual(["a", "b"]);
   });
 
   it("survives a payload containing newlines", () => {

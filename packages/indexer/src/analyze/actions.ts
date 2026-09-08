@@ -31,7 +31,8 @@ export interface ActionInfo {
   redirects: boolean;
 }
 
-const DESTRUCTIVE_NAME = /(^|[_-]|\b)(delete|destroy|remove|revoke|purge|wipe|drop|terminate|deactivate|disable|cancel|reset|erase|unpublish|archive)/i;
+const DESTRUCTIVE_NAME =
+  /(^|[_-]|\b)(delete|destroy|remove|revoke|purge|wipe|drop|terminate|deactivate|disable|cancel|reset|erase|unpublish|archive)/i;
 
 const DESTRUCTIVE_METHODS = new Set(["DELETE"]);
 
@@ -213,7 +214,9 @@ export function findActions(
       returnsValue: false,
       redirects: call
         .getDescendantsOfKind(SyntaxKind.CallExpression)
-        .some((inner) => /^(redirect|router\.push)$/.test(inner.getExpression().getText())),
+        .some((inner) =>
+          /^(redirect|router\.push)$/.test(inner.getExpression().getText()),
+        ),
     });
   }
 

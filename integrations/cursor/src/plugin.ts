@@ -132,12 +132,13 @@ function mcp(targets: PluginTargets): unknown {
   };
 }
 
-
 function json(value: unknown): string {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
 
 /** Quote a path for a shell command, since a home directory can have spaces. */
 function quote(path: string): string {
-  return /[\s"'\\$`]/.test(path) ? `"${path.replace(/(["$`\\])/g, "\\$1")}"` : path;
+  return /[\s"'\\$`]/.test(path)
+    ? `"${path.replace(/(["$`\\])/g, "\\$1")}"`
+    : path;
 }

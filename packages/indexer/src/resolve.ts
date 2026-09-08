@@ -165,7 +165,10 @@ function parseJsonc(text: string): unknown {
 
     if (char === "/" && next === "*") {
       index += 2;
-      while (index < text.length && !(text[index] === "*" && text[index + 1] === "/")) {
+      while (
+        index < text.length &&
+        !(text[index] === "*" && text[index + 1] === "/")
+      ) {
         index += 1;
       }
       index += 2;

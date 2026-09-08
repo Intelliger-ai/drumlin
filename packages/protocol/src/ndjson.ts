@@ -87,7 +87,11 @@ export class MessageDecoder {
         continue;
       }
 
-      if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+      if (
+        typeof parsed !== "object" ||
+        parsed === null ||
+        Array.isArray(parsed)
+      ) {
         errors.push(new FramingError("Message is not a JSON object", trimmed));
         continue;
       }

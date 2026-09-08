@@ -235,7 +235,11 @@ describe("accepting and proposing", () => {
 
       const { issue: declined, declined: count } = await engine.request(
         "issue.decline",
-        { root, id: issue.id, note: "no, the error state is genuinely missing" },
+        {
+          root,
+          id: issue.id,
+          note: "no, the error state is genuinely missing",
+        },
       );
 
       expect(count).toBe(1);
@@ -323,9 +327,7 @@ describe("accepting and proposing", () => {
 
       expect(wasAcceptedFor).toBe("shipping the beta without it");
       // The acceptance is not rewritten out of existence; it happened.
-      expect(
-        revoked.history?.map((event) => [event.to, event.note]),
-      ).toEqual(
+      expect(revoked.history?.map((event) => [event.to, event.note])).toEqual(
         expect.arrayContaining([
           ["accepted", "shipping the beta without it"],
           ["confirmed", "beta is over"],

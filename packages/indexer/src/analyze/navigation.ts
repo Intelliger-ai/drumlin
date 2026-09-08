@@ -53,7 +53,10 @@ const SEARCH_PARAM_TOKENS = [
  * `/invoices/${id}` keeps its shape and still matches `/invoices/[id]`.
  */
 function readHref(node: Node): { href: string; raw: string } | undefined {
-  if (Node.isStringLiteral(node) || Node.isNoSubstitutionTemplateLiteral(node)) {
+  if (
+    Node.isStringLiteral(node) ||
+    Node.isNoSubstitutionTemplateLiteral(node)
+  ) {
     return { href: node.getLiteralValue(), raw: node.getText() };
   }
 

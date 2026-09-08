@@ -74,10 +74,7 @@ export async function main(argv: readonly string[]): Promise<void> {
   });
 }
 
-function numberFlag(
-  argv: readonly string[],
-  name: string,
-): number | undefined {
+function numberFlag(argv: readonly string[], name: string): number | undefined {
   const index = argv.indexOf(name);
   if (index === -1) return undefined;
   const value = Number.parseInt(argv[index + 1] ?? "", 10);

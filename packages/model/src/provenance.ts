@@ -54,10 +54,7 @@ export const ProvenanceSchema = z.object({
 export type Provenance = z.infer<typeof ProvenanceSchema>;
 
 /** Provenance for something read directly out of the repository. */
-export function fromRepository(
-  evidence: string[],
-  confidence = 1,
-): Provenance {
+export function fromRepository(evidence: string[], confidence = 1): Provenance {
   return { source: "repository", evidence, confidence };
 }
 

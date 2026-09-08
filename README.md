@@ -53,7 +53,7 @@ startup drops from about 170ms to about 40ms, which matters because the
 The bundle keeps its dynamic imports split into chunks rather than inlining
 them, so `drumlin hook file-edit` still does not load the rule engine and
 ts-morph in order to post a filename to a socket. A single-file bundle
-measured *slower* than no build at all.
+measured _slower_ than no build at all.
 
 For development, `apps/cli/bin/drumlin.mjs` runs the TypeScript directly and
 always reflects the working tree.
@@ -78,21 +78,21 @@ derived and already ignored.
 
 All deterministic or structural. Nothing here is a model judgement.
 
-| Rule | What it catches |
-| --- | --- |
-| `state.route.no-loading` | A route fetches but renders nothing while waiting |
-| `state.route.no-error` | A failed request fails silently |
-| `state.route.no-not-found` | A dynamic route has no answer for a bad id |
-| `flow.dead-end` | A screen a user can reach but not leave |
-| `flow.orphan` | A screen nothing links to |
-| `context.navigation.drops-search-params` | Navigation that discards filters or search state |
-| `async.mutation.no-feedback` | A mutation with no pending or result state |
-| `flow.destructive.no-confirm` | A destructive action with no confirmation |
-| `ds.duplicate-primitive` | A primitive reimplemented next to the design system's |
-| `component.select-overload` | A select with far more options than a person can scan |
+| Rule                                     | What it catches                                       |
+| ---------------------------------------- | ----------------------------------------------------- |
+| `state.route.no-loading`                 | A route fetches but renders nothing while waiting     |
+| `state.route.no-error`                   | A failed request fails silently                       |
+| `state.route.no-not-found`               | A dynamic route has no answer for a bad id            |
+| `flow.dead-end`                          | A screen a user can reach but not leave               |
+| `flow.orphan`                            | A screen nothing links to                             |
+| `context.navigation.drops-search-params` | Navigation that discards filters or search state      |
+| `async.mutation.no-feedback`             | A mutation with no pending or result state            |
+| `flow.destructive.no-confirm`            | A destructive action with no confirmation             |
+| `ds.duplicate-primitive`                 | A primitive reimplemented next to the design system's |
+| `component.select-overload`              | A select with far more options than a person can scan |
 
 Rules about roles and permissions are deliberately absent. Drumlin can see
-that a route checks a role but not which roles *should* reach it, so that is a
+that a route checks a role but not which roles _should_ reach it, so that is a
 question it asks rather than a rule it enforces.
 
 ## Findings that reach the agent while it works

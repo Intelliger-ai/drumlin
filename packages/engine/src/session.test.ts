@@ -124,9 +124,9 @@ describe("session baselines", () => {
     });
 
     expect(diff.introduced.length).toBeGreaterThan(0);
-    expect(diff.introduced.some((finding) => finding.ruleId === "flow.orphan")).toBe(
-      true,
-    );
+    expect(
+      diff.introduced.some((finding) => finding.ruleId === "flow.orphan"),
+    ).toBe(true);
   });
 
   /**
@@ -136,7 +136,10 @@ describe("session baselines", () => {
   it("reports an introduced finding once when absorbing", async () => {
     await startSession("s-absorb");
 
-    const file = addScreen("absorbed", "export default function Absorbed() {\n  return <div>x</div>;\n}\n");
+    const file = addScreen(
+      "absorbed",
+      "export default function Absorbed() {\n  return <div>x</div>;\n}\n",
+    );
     await engine.request("session.touch", {
       sessionId: "s-absorb",
       files: [file],
@@ -162,7 +165,10 @@ describe("session baselines", () => {
   it("does not absorb unless asked", async () => {
     await startSession("s-no-absorb");
 
-    const file = addScreen("kept", "export default function Kept() {\n  return <div>x</div>;\n}\n");
+    const file = addScreen(
+      "kept",
+      "export default function Kept() {\n  return <div>x</div>;\n}\n",
+    );
     await engine.request("session.touch", {
       sessionId: "s-no-absorb",
       files: [file],
@@ -187,7 +193,10 @@ describe("session baselines", () => {
   it("sets aside a new finding in code the session did not touch", async () => {
     await startSession("s-elsewhere");
 
-    const mine = addScreen("typed-by-hand", "export default function Typed() {\n  return <div>x</div>;\n}\n");
+    const mine = addScreen(
+      "typed-by-hand",
+      "export default function Typed() {\n  return <div>x</div>;\n}\n",
+    );
 
     // The session reports touching a different, unrelated file.
     const theirs = join(root, "app", "page.tsx");
@@ -222,7 +231,10 @@ describe("session baselines", () => {
   it("falls back to fingerprints when no edits were recorded", async () => {
     await startSession("s-unrecorded");
 
-    const file = addScreen("unrecorded", "export default function Unrecorded() {\n  return <div>x</div>;\n}\n");
+    const file = addScreen(
+      "unrecorded",
+      "export default function Unrecorded() {\n  return <div>x</div>;\n}\n",
+    );
 
     const diff = await engine.request("session.diff", {
       root,
@@ -244,7 +256,10 @@ describe("session baselines", () => {
   it("does not withhold anything by default", async () => {
     await startSession("s-grace-default");
 
-    const file = addScreen("just-written", "export default function W() {\n  return <div>x</div>;\n}\n");
+    const file = addScreen(
+      "just-written",
+      "export default function W() {\n  return <div>x</div>;\n}\n",
+    );
     await engine.request("session.touch", {
       sessionId: "s-grace-default",
       files: [file],
@@ -263,7 +278,10 @@ describe("session baselines", () => {
   it("withholds a recently written file when a window is asked for", async () => {
     await startSession("s-grace");
 
-    const file = addScreen("in-flight", "export default function InFlight() {\n  return <div>x</div>;\n}\n");
+    const file = addScreen(
+      "in-flight",
+      "export default function InFlight() {\n  return <div>x</div>;\n}\n",
+    );
     await engine.request("session.touch", {
       sessionId: "s-grace",
       files: [file],
@@ -288,7 +306,10 @@ describe("session baselines", () => {
   it("honours the severity floor", async () => {
     await startSession("s-severity");
 
-    const file = addScreen("severity", "export default function Sev() {\n  return <div>x</div>;\n}\n");
+    const file = addScreen(
+      "severity",
+      "export default function Sev() {\n  return <div>x</div>;\n}\n",
+    );
     await engine.request("session.touch", {
       sessionId: "s-severity",
       files: [file],
@@ -306,7 +327,9 @@ describe("session baselines", () => {
       severity: "critical",
     });
 
-    expect(critical.introduced.length).toBeLessThanOrEqual(all.introduced.length);
+    expect(critical.introduced.length).toBeLessThanOrEqual(
+      all.introduced.length,
+    );
     expect(
       critical.introduced.every((finding) => finding.severity === "critical"),
     ).toBe(true);
@@ -329,12 +352,12 @@ describe("session baselines", () => {
   it("closes a session, and reports a second close as a no-op", async () => {
     await startSession("s-end");
 
-    expect((await engine.request("session.end", { sessionId: "s-end" })).closed).toBe(
-      true,
-    );
-    expect((await engine.request("session.end", { sessionId: "s-end" })).closed).toBe(
-      false,
-    );
+    expect(
+      (await engine.request("session.end", { sessionId: "s-end" })).closed,
+    ).toBe(true);
+    expect(
+      (await engine.request("session.end", { sessionId: "s-end" })).closed,
+    ).toBe(false);
   });
 
   /**

@@ -127,6 +127,8 @@ function present(
 ): string[] {
   return names.filter((name) => {
     const value = env[name];
-    return value !== undefined && value !== "" && value !== "0" && value !== "false";
+    return (
+      value !== undefined && value !== "" && value !== "0" && value !== "false"
+    );
   });
 }

@@ -62,10 +62,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   return { command, positional: rest, flags };
 }
 
-export function flagString(
-  args: ParsedArgs,
-  name: string,
-): string | undefined {
+export function flagString(args: ParsedArgs, name: string): string | undefined {
   const value = args.flags.get(name);
   return typeof value === "string" ? value : undefined;
 }

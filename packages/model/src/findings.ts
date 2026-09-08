@@ -10,7 +10,13 @@ import { SourceLocationSchema } from "./provenance.js";
  * See vault/Rules/Rule Output Contract.md and Context/05 UX Rules Engine.md
  */
 
-export const SEVERITIES = ["info", "low", "medium", "high", "critical"] as const;
+export const SEVERITIES = [
+  "info",
+  "low",
+  "medium",
+  "high",
+  "critical",
+] as const;
 export const SeveritySchema = z.enum(SEVERITIES);
 export type Severity = z.infer<typeof SeveritySchema>;
 
@@ -33,7 +39,12 @@ export const RULE_CLASSIFICATIONS = [
 export const RuleClassificationSchema = z.enum(RULE_CLASSIFICATIONS);
 export type RuleClassification = z.infer<typeof RuleClassificationSchema>;
 
-export const EVIDENCE_TYPES = ["source", "graph", "runtime", "context"] as const;
+export const EVIDENCE_TYPES = [
+  "source",
+  "graph",
+  "runtime",
+  "context",
+] as const;
 export const EvidenceTypeSchema = z.enum(EVIDENCE_TYPES);
 export type EvidenceType = z.infer<typeof EvidenceTypeSchema>;
 

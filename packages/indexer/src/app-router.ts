@@ -142,7 +142,10 @@ export function screenSegments(
 }
 
 /** Node ID for the state a convention file declares in a given segment. */
-export function stateNodeId(segment: AppSegment, conventionName: string): string {
+export function stateNodeId(
+  segment: AppSegment,
+  conventionName: string,
+): string {
   const kind = STATE_FILES[conventionName] ?? conventionName;
   const screen = routeToScreenId(segment.route);
   return stateId(screen, kind);

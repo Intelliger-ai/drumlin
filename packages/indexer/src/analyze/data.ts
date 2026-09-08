@@ -170,7 +170,10 @@ export function analyzeData(sourceFile: SourceFile): DataProfile {
   }
 
   for (const name of PAGES_DATA_EXPORTS) {
-    if (sourceFile.getFunction(name) ?? sourceFile.getVariableDeclaration(name)) {
+    if (
+      sourceFile.getFunction(name) ??
+      sourceFile.getVariableDeclaration(name)
+    ) {
       evidence.push(`exports ${name}`);
     }
   }
@@ -284,7 +287,9 @@ function findSearchParamKeys(sourceFile: SourceFile): string[] {
 
   const isHolder = (expression: Node): boolean => {
     const receiver = expression.getText().replace(/^await\s+/, "");
-    return holders.has(receiver) || holders.has(receiver.split(".").pop() ?? "");
+    return (
+      holders.has(receiver) || holders.has(receiver.split(".").pop() ?? "")
+    );
   };
 
   for (const call of sourceFile.getDescendantsOfKind(

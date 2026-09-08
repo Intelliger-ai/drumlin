@@ -38,12 +38,7 @@ export type IssueStatus = z.infer<typeof IssueStatusSchema>;
  * see `attest` in the engine — but it cannot even be expressed without being
  * one of these.
  */
-export const ACTORS = [
-  "human",
-  "agent",
-  "rule-engine",
-  "verifier",
-] as const;
+export const ACTORS = ["human", "agent", "rule-engine", "verifier"] as const;
 export const ActorSchema = z.enum(ACTORS);
 export type Actor = z.infer<typeof ActorSchema>;
 
@@ -107,9 +102,27 @@ export const STATE_OWNERS: Record<IssueStatus, readonly Actor[]> = {
  */
 const TRANSITIONS: Record<IssueStatus, readonly IssueStatus[]> = {
   detected: ["confirmed", "candidate_resolved", "verifying", "superseded"],
-  confirmed: ["ready", "accepted", "candidate_resolved", "verifying", "superseded"],
-  ready: ["assigned", "accepted", "candidate_resolved", "verifying", "superseded"],
-  assigned: ["in_progress", "ready", "candidate_resolved", "verifying", "superseded"],
+  confirmed: [
+    "ready",
+    "accepted",
+    "candidate_resolved",
+    "verifying",
+    "superseded",
+  ],
+  ready: [
+    "assigned",
+    "accepted",
+    "candidate_resolved",
+    "verifying",
+    "superseded",
+  ],
+  assigned: [
+    "in_progress",
+    "ready",
+    "candidate_resolved",
+    "verifying",
+    "superseded",
+  ],
   in_progress: ["candidate_resolved", "ready", "verifying", "superseded"],
   candidate_resolved: ["verifying", "superseded"],
   verifying: ["resolved", "reopened"],

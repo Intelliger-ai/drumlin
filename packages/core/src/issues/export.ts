@@ -111,12 +111,17 @@ export function toGithubScript(
   ];
 
   const allLabels = new Set<string>();
-  for (const issue of issues) for (const label of labels(issue)) allLabels.add(label);
+  for (const issue of issues)
+    for (const label of labels(issue)) allLabels.add(label);
 
   if (allLabels.size > 0) {
-    lines.push("# Labels first: `--label` on a label that does not exist is a hard error.");
+    lines.push(
+      "# Labels first: `--label` on a label that does not exist is a hard error.",
+    );
     for (const label of [...allLabels].sort()) {
-      lines.push(`gh label create ${shellQuote(label)} --force >/dev/null 2>&1 || true`);
+      lines.push(
+        `gh label create ${shellQuote(label)} --force >/dev/null 2>&1 || true`,
+      );
     }
     lines.push("");
   }
@@ -179,7 +184,9 @@ function body(issue: Issue, options: ExportOptions): string {
     ...new Set(
       issue.evidence
         .map((item) => item.location?.file)
-        .filter((file): file is string => typeof file === "string" && file.length > 0),
+        .filter(
+          (file): file is string => typeof file === "string" && file.length > 0,
+        ),
     ),
   ];
 

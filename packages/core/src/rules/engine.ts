@@ -125,9 +125,7 @@ export function runRules(
         grouped.push(...cluster.findings);
         continue;
       }
-      grouped.push(
-        mergeCluster(cluster.findings, cluster.prefix, grouping),
-      );
+      grouped.push(mergeCluster(cluster.findings, cluster.prefix, grouping));
       for (const finding of cluster.findings) {
         suppressed.push({
           finding,
@@ -209,13 +207,11 @@ function mergeCluster(
   // Every affected screen survives as evidence, so grouping loses no detail —
   // it only changes where the finding points.
   const evidence: Evidence[] = [
-    ...routes.map(
-      (route): Evidence => ({
-        type: "graph",
-        ref: route,
-        note: "affected screen",
-      }),
-    ),
+    ...routes.map((route): Evidence => ({
+      type: "graph",
+      ref: route,
+      note: "affected screen",
+    })),
     ...cluster.flatMap((finding) => finding.evidence).slice(0, 8),
   ];
 

@@ -33,14 +33,16 @@ const first = session.index();
 const firstIndexMs = performance.now() - firstIndexStart;
 
 console.log(`${app.root}`);
-console.log(`  ${session.files.length} files, ${first.stats.screens} screens, ${first.graph.edges.length} edges`);
+console.log(
+  `  ${session.files.length} files, ${first.stats.screens} screens, ${first.graph.edges.length} edges`,
+);
 console.log(`  cold parse       ${parseMs.toFixed(0)}ms`);
 console.log(`  first analysis   ${firstIndexMs.toFixed(0)}ms`);
 console.log(`  cold total       ${(parseMs + firstIndexMs).toFixed(0)}ms`);
 
 // Touch a real screen file so the refresh has something to re-read.
-const victim =
-  first.graph.nodes.find((node) => node.type === "Screen")?.sources?.[0]?.file;
+const victim = first.graph.nodes.find((node) => node.type === "Screen")
+  ?.sources?.[0]?.file;
 const absolute = victim ? `${app.root}/${victim}` : session.files[0];
 
 const samples = [];
@@ -63,7 +65,9 @@ const totals = samples.map((sample) => sample.total).sort((a, b) => a - b);
 const median = totals[Math.floor(totals.length / 2)];
 const worst = totals[totals.length - 1];
 
-console.log(`  warm re-index    median ${median.toFixed(0)}ms · worst ${worst.toFixed(0)}ms  (${iterations} runs, one file touched)`);
+console.log(
+  `  warm re-index    median ${median.toFixed(0)}ms · worst ${worst.toFixed(0)}ms  (${iterations} runs, one file touched)`,
+);
 console.log(
   `  speedup          ${((parseMs + firstIndexMs) / median).toFixed(1)}x versus cold`,
 );

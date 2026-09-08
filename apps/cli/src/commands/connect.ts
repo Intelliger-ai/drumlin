@@ -41,9 +41,7 @@ export async function connectCommand(
   const [host] = args.positional;
 
   if (host !== "cursor") {
-    process.stderr.write(
-      host ? `No adapter for ${host}.\n\n${USAGE}` : USAGE,
-    );
+    process.stderr.write(host ? `No adapter for ${host}.\n\n${USAGE}` : USAGE);
     return host ? 1 : 0;
   }
 

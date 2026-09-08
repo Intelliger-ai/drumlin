@@ -144,7 +144,9 @@ function constraintsFor(
       );
     }
     if (properties["clientComponent"] === true) {
-      constraints.push("A client component: server-only APIs are unavailable here.");
+      constraints.push(
+        "A client component: server-only APIs are unavailable here.",
+      );
     }
     if (screen.router) {
       constraints.push(
@@ -260,7 +262,9 @@ function retestCommand(issue: Issue, appFlag: string | undefined): string {
 }
 
 function fallbackAcceptance(issue: Issue): string[] {
-  const rule = MILESTONE_A_RULES.find((candidate) => candidate.id === issue.rule.id);
+  const rule = MILESTONE_A_RULES.find(
+    (candidate) => candidate.id === issue.rule.id,
+  );
   return rule
     ? [`\`${rule.id}\` no longer reports this target: ${rule.summary}`]
     : [`\`${issue.rule.id}\` no longer reports this target.`];

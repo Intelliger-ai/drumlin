@@ -146,7 +146,12 @@ describe("locating the daemon", () => {
   // actually on disk, and must not fall through to `drumlind` on PATH — which
   // is the failure the bundle shipped, and which no test could see.
   describe("in this repository", () => {
-    const repo = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+    const repo = join(
+      dirname(fileURLToPath(import.meta.url)),
+      "..",
+      "..",
+      "..",
+    );
 
     function from(cli: string): string[] {
       process.argv[1] = join(repo, cli);

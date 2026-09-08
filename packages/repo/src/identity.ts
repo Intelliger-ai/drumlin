@@ -50,7 +50,10 @@ export function readIdentityBaseline<T extends Snapshot>(
   }
 }
 
-export function writeIdentityBaseline(root: string, snapshot: Snapshot): string {
+export function writeIdentityBaseline(
+  root: string,
+  snapshot: Snapshot,
+): string {
   const file = fileFor(root);
   mkdirSync(join(repoPaths(root).dir, "graph"), { recursive: true });
   writeFileSync(file, `${JSON.stringify(snapshot, null, 2)}\n`, "utf8");

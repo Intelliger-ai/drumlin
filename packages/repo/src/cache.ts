@@ -25,9 +25,7 @@ type SqliteDatabase = {
  * Silencing it around just this import keeps the CLI's output clean without
  * hiding warnings from anything else.
  */
-async function loadSqlite(): Promise<
-  new (path: string) => SqliteDatabase
-> {
+async function loadSqlite(): Promise<new (path: string) => SqliteDatabase> {
   const originalEmitWarning = process.emitWarning;
   process.emitWarning = (() => {}) as typeof process.emitWarning;
   try {
@@ -152,7 +150,12 @@ export class DerivedCache {
            created_at = excluded.created_at,
            payload    = excluded.payload`,
       )
-      .run(key, IR_SCHEMA_VERSION, new Date().toISOString(), JSON.stringify(graph));
+      .run(
+        key,
+        IR_SCHEMA_VERSION,
+        new Date().toISOString(),
+        JSON.stringify(graph),
+      );
   }
 
   close(): void {

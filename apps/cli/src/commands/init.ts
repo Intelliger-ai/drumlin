@@ -30,7 +30,8 @@ export async function initCommand(
   if (created.length === 0) {
     lines.push(dim("Already set up; nothing changed."));
   } else {
-    for (const path of created) lines.push(`  created ${relative(app.root, path)}`);
+    for (const path of created)
+      lines.push(`  created ${relative(app.root, path)}`);
   }
 
   lines.push("");
@@ -45,7 +46,9 @@ export async function initCommand(
     ),
   );
   lines.push("");
-  lines.push("Next: `drumlin graph` to check what was understood, then `drumlin check`.");
+  lines.push(
+    "Next: `drumlin graph` to check what was understood, then `drumlin check`.",
+  );
   // Init deliberately does not activate. Setting up the contract and agreeing
   // to be interrupted while you work are different decisions, and conflating
   // them is how a tool ends up running somewhere nobody asked it to.

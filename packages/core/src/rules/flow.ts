@@ -16,8 +16,7 @@ export const deadEnd: Rule = {
   classification: "graph",
   severity: "medium",
   principles: ["goal-gradient-effect", "peak-end-rule"],
-  summary:
-    "A screen inside a flow lets the user act but offers no way onward.",
+  summary: "A screen inside a flow lets the user act but offers no way onward.",
   evaluate({ view }: RuleContext): Finding[] {
     return deadEnds(view).map(({ screen, inboundCount, actions }) => {
       const evidence = [
@@ -64,8 +63,7 @@ export const orphan: Rule = {
   classification: "graph",
   severity: "medium",
   principles: ["jakobs-law"],
-  summary:
-    "A screen exists but no navigation reaches it from any entry point.",
+  summary: "A screen exists but no navigation reaches it from any entry point.",
   // A whole unreachable section is one decision, not nine. On the first real
   // app this was a rebrand leaving three sections of pages behind; reading it
   // as 29 separate findings hid the fact that it was three.

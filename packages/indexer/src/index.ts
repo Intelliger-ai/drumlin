@@ -1,6 +1,10 @@
 import { existsSync } from "node:fs";
 import { dirname, resolve as resolvePath } from "node:path";
-import { FileSystemRefreshResult, type Project, type SourceFile } from "ts-morph";
+import {
+  FileSystemRefreshResult,
+  type Project,
+  type SourceFile,
+} from "ts-morph";
 import {
   fromRepository,
   nodeId,
@@ -42,7 +46,12 @@ import {
   type AppSegment,
 } from "./app-router.js";
 import { GraphBuilder } from "./builder.js";
-import { describeApp, findApps, relativePath, type NextApp } from "./discover.js";
+import {
+  describeApp,
+  findApps,
+  relativePath,
+  type NextApp,
+} from "./discover.js";
 import { collectPagesRoutes } from "./pages-router.js";
 import {
   addSourceDirectory,
@@ -188,7 +197,12 @@ export class IndexSession {
    * that reports "re-indexed" after being handed only image paths is lying.
    */
   refresh(files: readonly string[]): RefreshOutcome {
-    const outcome: RefreshOutcome = { updated: 0, added: 0, removed: 0, ignored: 0 };
+    const outcome: RefreshOutcome = {
+      updated: 0,
+      added: 0,
+      removed: 0,
+      ignored: 0,
+    };
     let structureChanged = false;
 
     for (const file of files) {
@@ -424,9 +438,7 @@ function buildGraph(
 
   for (const component of components) {
     const id = nodeId("component", component.file, component.name);
-    const primitive = duplicateByKey.get(
-      `${component.file}#${component.name}`,
-    );
+    const primitive = duplicateByKey.get(`${component.file}#${component.name}`);
 
     const properties: Record<string, JsonValue> = {
       designSystem: component.designSystem,
@@ -434,7 +446,8 @@ function buildGraph(
       variants: component.variantValues,
       importsDesignSystem: component.importsDesignSystem,
     };
-    if (component.rootElement) properties["rootElement"] = component.rootElement;
+    if (component.rootElement)
+      properties["rootElement"] = component.rootElement;
     if (primitive) {
       properties["duplicatesPrimitive"] = primitive.name;
       properties["duplicatesPrimitiveFile"] = primitive.file;
@@ -515,7 +528,8 @@ function buildGraph(
         const match = candidates.find((candidate) =>
           importPointsAt(app.root, file, specifier, candidate.file),
         );
-        const action = match ?? (candidates.length === 1 ? candidates[0] : undefined);
+        const action =
+          match ?? (candidates.length === 1 ? candidates[0] : undefined);
         if (!action) continue;
 
         const key = `${action.file}#${action.name}`;
@@ -735,7 +749,11 @@ function buildGraph(
     sourceFile: string,
     screens: Array<{ id: NodeId; route: string }>,
   ): void => {
-    const collected = collectChromeTargets(sourceFile, CHROME_IMPORT_DEPTH, new Set());
+    const collected = collectChromeTargets(
+      sourceFile,
+      CHROME_IMPORT_DEPTH,
+      new Set(),
+    );
     if (collected.length === 0) return;
     for (const screen of screens) {
       for (const { target, file } of collected) {
@@ -839,7 +857,10 @@ function buildGraph(
     if (elsewhere.length === 0) continue;
     const node = builder.getNode(screen.id);
     if (!node) continue;
-    node.properties = { ...node.properties, mentionedIn: elsewhere.slice(0, 5) };
+    node.properties = {
+      ...node.properties,
+      mentionedIn: elsewhere.slice(0, 5),
+    };
   }
 
   // ---- Module graph --------------------------------------------------------
@@ -962,7 +983,10 @@ function screensInSubtree(
     let current: number = index;
     while (current >= 0) {
       if (current === segmentIndex) {
-        result.push({ id: routeToScreenId(segment.route), route: segment.route });
+        result.push({
+          id: routeToScreenId(segment.route),
+          route: segment.route,
+        });
         break;
       }
       const parent: number | undefined = segments[current]?.parent;
@@ -1028,6 +1052,7 @@ function importPointsAt(
   const tail = specifier.replace(/^(@|~|#)\//, "").replace(/^src\//, "");
   if (tail.length === 0) return false;
   return (
-    targetWithoutExtension === tail || targetWithoutExtension.endsWith(`/${tail}`)
+    targetWithoutExtension === tail ||
+    targetWithoutExtension.endsWith(`/${tail}`)
   );
 }

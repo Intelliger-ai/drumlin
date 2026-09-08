@@ -381,7 +381,11 @@ function score(
     }
   };
 
-  consider(weights.symbol, symbolSimilarity(old.symbols, fresh.symbols), "symbol");
+  consider(
+    weights.symbol,
+    symbolSimilarity(old.symbols, fresh.symbols),
+    "symbol",
+  );
   consider(weights.route, routeSimilarity(old.route, fresh.route), "route");
   consider(weights.file, fileSimilarity(old.files, fresh.files), "file");
   consider(
@@ -469,9 +473,7 @@ function assign(
   return { matched, ambiguous };
 }
 
-function nodesOf(
-  input: GraphDocument | GraphIdentitySnapshot,
-): IdentityNode[] {
+function nodesOf(input: GraphDocument | GraphIdentitySnapshot): IdentityNode[] {
   return "nodes" in input && "schemaVersion" in input && !("edges" in input)
     ? (input as GraphIdentitySnapshot).nodes
     : identityNodes(input as GraphDocument);
@@ -582,7 +584,9 @@ function neighbourhoodSimilarity(
   if (a.length === 0 && b.length === 0) return undefined;
   if (a.length === 0 || b.length === 0) return 0;
 
-  const projected = new Set(a.map((id) => mapping.get(id) ?? `unmatched:${id}`));
+  const projected = new Set(
+    a.map((id) => mapping.get(id) ?? `unmatched:${id}`),
+  );
   const target = new Set(b);
 
   let shared = 0;

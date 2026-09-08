@@ -81,7 +81,9 @@ export async function exportCommand(
 
   if (target === "linear") {
     lines.push(
-      dim("  Import in Linear: Settings → Import/Export → CLI import → Linear CSV"),
+      dim(
+        "  Import in Linear: Settings → Import/Export → CLI import → Linear CSV",
+      ),
     );
   }
   if (target === "github") {

@@ -11,7 +11,7 @@ Four read-only MCP tools expose it. It records issues; it never closes them.
 ## When to reach for it
 
 **Before changing navigation or a route.** Call `drumlin_get_flow` with the
-route. Inbound links are the reason: what links *to* `/invoices/[id]` lives in
+route. Inbound links are the reason: what links _to_ `/invoices/[id]` lives in
 whatever imports it — a table column definition, a sidebar three directories
 away — and reading the page file tells you nothing about it. Rename or remove a
 route without checking and you leave a dead link the type checker will not catch.

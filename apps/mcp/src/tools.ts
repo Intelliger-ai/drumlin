@@ -160,7 +160,9 @@ export const TOOLS: readonly ToolDefinition[] = [
 
       lines.push("", `Leads to (${flow.outbound.length}):`);
       if (flow.outbound.length === 0) {
-        lines.push("  nothing — this is a dead end apart from global navigation");
+        lines.push(
+          "  nothing — this is a dead end apart from global navigation",
+        );
       } else {
         for (const link of flow.outbound.slice(0, 25)) {
           lines.push(`  ${link.route}${describeLink(link)}`);
@@ -302,7 +304,8 @@ function issueSummary(issues: {
   accepted: number;
   bySeverity: Record<string, number>;
 }): string {
-  if (issues.total === 0) return "No issues on record yet. Run `drumlin check`.";
+  if (issues.total === 0)
+    return "No issues on record yet. Run `drumlin check`.";
 
   const bySeverity = Object.entries(issues.bySeverity)
     .filter(([, count]) => count > 0)
@@ -354,7 +357,8 @@ function renderPacket(packet: IssuePacket): string {
     `Problem: ${packet.currentBehaviour}`,
   ];
 
-  if (packet.targetBehaviour) lines.push(`Should be: ${packet.targetBehaviour}`);
+  if (packet.targetBehaviour)
+    lines.push(`Should be: ${packet.targetBehaviour}`);
   if (packet.actor) lines.push(`Affects: ${packet.actor}`);
 
   lines.push(
@@ -454,7 +458,7 @@ function renderPacket(packet: IssuePacket): string {
       // the finding instead, which is worse than an argument on the record.
       lines.push(
         "If you think the current behaviour is correct, make the case with " +
-          "`drumlin propose <id> --reason \"...\"`. That records your reasoning " +
+          '`drumlin propose <id> --reason "..."`. That records your reasoning ' +
           "on the issue for a person to decide. Running `drumlin accept` " +
           "yourself will be refused: it is a human decision, and Drumlin " +
           "checks who is asking.",

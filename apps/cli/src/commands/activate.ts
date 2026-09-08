@@ -91,7 +91,9 @@ async function flip(
       "\n" +
       "  Findings now reach you while you code:\n" +
       dim("    on every agent edit, the graph re-indexes in the background\n") +
-      dim("    at the end of a turn, new high-severity problems go back to the agent\n") +
+      dim(
+        "    at the end of a turn, new high-severity problems go back to the agent\n",
+      ) +
       dim("    the agent can pull its own issue packet over MCP\n") +
       "\n" +
       dim("  Committed to .drumlin/config.yaml, so your team gets it too.\n") +

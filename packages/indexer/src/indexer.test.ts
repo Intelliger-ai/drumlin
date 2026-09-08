@@ -2,7 +2,11 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { SourceFile } from "ts-morph";
 import { beforeAll, describe, expect, test } from "vitest";
-import { parseGraphDocument, type GraphDocument, type GraphNode } from "@drumlin/model";
+import {
+  parseGraphDocument,
+  type GraphDocument,
+  type GraphNode,
+} from "@drumlin/model";
 import { findActions } from "./analyze/actions.js";
 import { findUnboundedSelects } from "./analyze/components.js";
 import { analyzeData } from "./analyze/data.js";
@@ -57,7 +61,9 @@ describe("discovery", () => {
     // otherwise double every route in the product.
     expect(isIgnoredPath("/repo/.next/server/pages/index.js")).toBe(true);
     expect(isIgnoredPath("/repo/node_modules/next/link.js")).toBe(true);
-    expect(isIgnoredPath("/repo/.claude/worktrees/copy/app/page.tsx")).toBe(true);
+    expect(isIgnoredPath("/repo/.claude/worktrees/copy/app/page.tsx")).toBe(
+      true,
+    );
     expect(isIgnoredPath("/repo/src/app/invoices/page.tsx")).toBe(false);
   });
 
@@ -68,9 +74,12 @@ describe("discovery", () => {
 });
 
 describe("route matching", () => {
-  const patterns = ["/invoices", "/invoices/new", "/invoices/[id]", "/docs/[...slug]"].map(
-    toRoutePattern,
-  );
+  const patterns = [
+    "/invoices",
+    "/invoices/new",
+    "/invoices/[id]",
+    "/docs/[...slug]",
+  ].map(toRoutePattern);
 
   test("a literal segment beats a dynamic one", () => {
     expect(matchRoute("/invoices/new", patterns)?.route).toBe("/invoices/new");
@@ -146,8 +155,12 @@ describe("screens", () => {
 
 describe("states", () => {
   test("convention files become State nodes attached to their screen", () => {
-    expect(hasEdge("screen.invoices.id", "contains", "state.invoices.id.loading")).toBe(true);
-    expect(hasEdge("screen.invoices.id", "contains", "state.invoices.id.error")).toBe(true);
+    expect(
+      hasEdge("screen.invoices.id", "contains", "state.invoices.id.loading"),
+    ).toBe(true);
+    expect(
+      hasEdge("screen.invoices.id", "contains", "state.invoices.id.error"),
+    ).toBe(true);
   });
 
   test("a screen with no boundary in its chain gets no state edge", () => {
@@ -162,7 +175,9 @@ describe("states", () => {
 describe("actions", () => {
   test("server actions become Action nodes", () => {
     expect(node("action.approve-invoice").type).toBe("Action");
-    expect(node("action.approve-invoice").properties?.["serverAction"]).toBe(true);
+    expect(node("action.approve-invoice").properties?.["serverAction"]).toBe(
+      true,
+    );
   });
 
   test("a delete is marked destructive and irreversible", () => {
@@ -176,7 +191,9 @@ describe("actions", () => {
   });
 
   test("the screen that invokes an action is linked to it", () => {
-    expect(hasEdge("screen.invoices.id", "contains", "action.approve-invoice")).toBe(true);
+    expect(
+      hasEdge("screen.invoices.id", "contains", "action.approve-invoice"),
+    ).toBe(true);
   });
 });
 
@@ -412,9 +429,9 @@ describe("import resolution", () => {
     const resolve = createImportResolver("/app", [
       "/app/src/components/mega-menu/index.tsx",
     ]);
-    expect(
-      resolve("/app/src/components/navbar.tsx", "./mega-menu"),
-    ).toBe("/app/src/components/mega-menu/index.tsx");
+    expect(resolve("/app/src/components/navbar.tsx", "./mega-menu")).toBe(
+      "/app/src/components/mega-menu/index.tsx",
+    );
   });
 
   test("a package import resolves to nothing local", () => {

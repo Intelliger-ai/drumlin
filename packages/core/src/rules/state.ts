@@ -42,7 +42,11 @@ function readsData(screen: GraphNode): boolean {
 
 function handles(screen: GraphNode, kind: string): boolean {
   const handled = screen.properties?.["handledStates"];
-  if (typeof handled !== "object" || handled === null || Array.isArray(handled)) {
+  if (
+    typeof handled !== "object" ||
+    handled === null ||
+    Array.isArray(handled)
+  ) {
     return false;
   }
   return (handled as Record<string, unknown>)[kind] === true;

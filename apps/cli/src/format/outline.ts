@@ -43,9 +43,7 @@ export function renderOutline(
     const source = screen.sources?.[0];
     if (source) lines.push(`  ${dim(source.file)}`);
 
-    const searchParams = asStringArray(
-      screen.properties?.["searchParamKeys"],
-    );
+    const searchParams = asStringArray(screen.properties?.["searchParamKeys"]);
     if (searchParams.length > 0) {
       lines.push(`  reads searchParams: ${searchParams.join(", ")}`);
     }
@@ -163,7 +161,10 @@ export function renderGraphSummary(graph: GraphDocument): string {
   }
   const parts = [...counts.entries()]
     .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([type, count]) => `${count} ${type.toLowerCase()}${count === 1 ? "" : "s"}`);
+    .map(
+      ([type, count]) =>
+        `${count} ${type.toLowerCase()}${count === 1 ? "" : "s"}`,
+    );
   return `${parts.join(" · ")} · ${graph.edges.length} edges`;
 }
 

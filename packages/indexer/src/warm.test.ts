@@ -1,4 +1,10 @@
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  cpSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
@@ -8,7 +14,9 @@ import { IndexSession, resolveApp } from "./index.js";
 import { createProject } from "./project.js";
 import { textWithoutComments } from "./analyze/text.js";
 
-const FIXTURE = fileURLToPath(new URL("../fixtures/mixed-app", import.meta.url));
+const FIXTURE = fileURLToPath(
+  new URL("../fixtures/mixed-app", import.meta.url),
+);
 
 /**
  * Freshness of the warm index.
@@ -55,7 +63,9 @@ describe("warm re-index", () => {
       "<form action={deleteInvoice}>",
       `<form action={deleteInvoice} onSubmit={(e) => { if (!window.confirm("Are you sure?")) e.preventDefault(); }}>`,
     );
-    expect(fixed, "fixture markup changed; update this helper").not.toBe(source);
+    expect(fixed, "fixture markup changed; update this helper").not.toBe(
+      source,
+    );
     writeFileSync(page, fixed, "utf8");
   }
 

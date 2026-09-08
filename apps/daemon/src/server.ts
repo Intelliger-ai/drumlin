@@ -145,7 +145,7 @@ export class Daemon {
     clearStaleSocket(this.paths);
 
     if (this.options.onStop) this.options.onStop();
-    else process.exitCode = reason === "idle" ? 0 : process.exitCode ?? 0;
+    else process.exitCode = reason === "idle" ? 0 : (process.exitCode ?? 0);
   }
 
   private accept(socket: Socket): void {
@@ -162,7 +162,11 @@ export class Daemon {
       for (const error of errors) {
         this.send(
           connection,
-          rpcFailure(null, RPC_PARSE_ERROR, `Malformed message: ${error.message}`),
+          rpcFailure(
+            null,
+            RPC_PARSE_ERROR,
+            `Malformed message: ${error.message}`,
+          ),
         );
       }
       for (const message of messages) {
@@ -204,7 +208,11 @@ export class Daemon {
     if (!isRequest(message)) {
       this.send(
         connection,
-        rpcFailure(null, RPC_INVALID_REQUEST, "Expected a request or notification"),
+        rpcFailure(
+          null,
+          RPC_INVALID_REQUEST,
+          "Expected a request or notification",
+        ),
       );
       return;
     }
@@ -255,8 +263,7 @@ export class Daemon {
 
       case SUBSCRIBE_METHOD: {
         const params = request.params as
-          | { root?: string; events?: DaemonEventName[] }
-          | undefined;
+          { root?: string; events?: DaemonEventName[] } | undefined;
         if (!params?.root) throw new InvalidParams("subscribe needs a root");
         connection.subscriptions.set(
           params.root,
@@ -299,8 +306,7 @@ export class Daemon {
    */
   private touch(params: unknown): number {
     const typed = params as
-      | { root?: string; files?: string[]; sessionId?: string }
-      | undefined;
+      { root?: string; files?: string[]; sessionId?: string } | undefined;
     if (!typed?.root || !Array.isArray(typed.files)) return 0;
 
     const recorded = this.engine.touch(typed.root, typed.files);

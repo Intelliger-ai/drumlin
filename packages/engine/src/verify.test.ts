@@ -1,4 +1,10 @@
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  cpSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { dirname, join, resolve } from "node:path";
@@ -39,7 +45,10 @@ describe("verification ownership", () => {
   });
 
   async function check(): Promise<Issue[]> {
-    const { issues } = await engine.request("check.run", { root, cache: false });
+    const { issues } = await engine.request("check.run", {
+      root,
+      cache: false,
+    });
     return issues;
   }
 
@@ -74,7 +83,9 @@ describe("verification ownership", () => {
     // unchanged and says nothing. That silently turns "verify a real fix" into
     // "verify no change at all", which passes or fails for reasons unrelated
     // to what the test is about.
-    expect(fixed, "fixture markup changed; update this helper").not.toBe(source);
+    expect(fixed, "fixture markup changed; update this helper").not.toBe(
+      source,
+    );
     writeFileSync(page, fixed, "utf8");
   }
 
@@ -84,7 +95,10 @@ describe("verification ownership", () => {
     const issue = issues.find(
       (candidate) => candidate.rule.id === "flow.destructive.no-confirm",
     );
-    expect(issue, "fixture should report an unconfirmed destructive action").toBeDefined();
+    expect(
+      issue,
+      "fixture should report an unconfirmed destructive action",
+    ).toBeDefined();
     return issue!;
   }
 
@@ -107,9 +121,9 @@ describe("verification ownership", () => {
     });
 
     it("lets an agent claim a fix", () => {
-      expect(mayTransition("agent", "in_progress", "candidate_resolved").ok).toBe(
-        true,
-      );
+      expect(
+        mayTransition("agent", "in_progress", "candidate_resolved").ok,
+      ).toBe(true);
     });
 
     it("gives a claim nowhere to go except the verifier", () => {
@@ -118,9 +132,9 @@ describe("verification ownership", () => {
       expect(mayTransition("agent", "candidate_resolved", "verifying").ok).toBe(
         false,
       );
-      expect(mayTransition("verifier", "candidate_resolved", "verifying").ok).toBe(
-        true,
-      );
+      expect(
+        mayTransition("verifier", "candidate_resolved", "verifying").ok,
+      ).toBe(true);
     });
 
     it("still refuses moves that make no sense, whoever asks", () => {
@@ -198,7 +212,12 @@ describe("verification ownership", () => {
       });
 
       await expect(
-        engine.request("issue.claim", { root, id: issue.id, note: "fixed", by: "agent" }),
+        engine.request("issue.claim", {
+          root,
+          id: issue.id,
+          note: "fixed",
+          by: "agent",
+        }),
       ).rejects.toThrow(/accepted/);
     });
   });
@@ -265,7 +284,10 @@ describe("verification ownership", () => {
       // a dialog.
       confirmDeletion();
 
-      const result = await engine.request("issue.verify", { root, id: issue.id });
+      const result = await engine.request("issue.verify", {
+        root,
+        id: issue.id,
+      });
       const report = result.verified[0];
 
       expect(report?.outcome).toBe("gone");
@@ -278,7 +300,10 @@ describe("verification ownership", () => {
       const issue = await fixableIssue();
       confirmDeletion();
 
-      const result = await engine.request("issue.verify", { root, id: issue.id });
+      const result = await engine.request("issue.verify", {
+        root,
+        id: issue.id,
+      });
 
       // The honesty requirement. A rule that stopped matching the source is
       // not the experience having been checked, and an issue resolved on that
@@ -304,14 +329,19 @@ describe("verification ownership", () => {
 
     it("will not resolve because the screen was deleted", async () => {
       const issues = await check();
-      const target = issues.find((issue) => issue.target.node === "screen.reports");
+      const target = issues.find(
+        (issue) => issue.target.node === "screen.reports",
+      );
       expect(target).toBeDefined();
 
       // The loophole. Delete the subject and every rule about it goes quiet,
       // which is indistinguishable from having fixed it — so it must not count.
       rmSync(join(root, "app/reports"), { recursive: true, force: true });
 
-      const result = await engine.request("issue.verify", { root, id: target!.id });
+      const result = await engine.request("issue.verify", {
+        root,
+        id: target!.id,
+      });
       const report = result.verified[0];
 
       expect(report?.outcome).toBe("vanished");
@@ -342,7 +372,10 @@ describe("verification ownership", () => {
       expect(disabled).not.toBe(source);
       writeFileSync(config, disabled, "utf8");
 
-      const result = await engine.request("issue.verify", { root, id: issue.id });
+      const result = await engine.request("issue.verify", {
+        root,
+        id: issue.id,
+      });
       const report = result.verified[0];
 
       expect(report?.outcome).toBe("inconclusive");
@@ -406,7 +439,9 @@ describe("verification ownership", () => {
       // `reconcile` does this, and it is the reason `rule-engine` is allowed to
       // set `reopened` alongside the verifier: the rule firing again is the
       // same check that found the problem, reporting that it is back.
-      expect(mayTransition("rule-engine", "resolved", "reopened").ok).toBe(true);
+      expect(mayTransition("rule-engine", "resolved", "reopened").ok).toBe(
+        true,
+      );
     });
   });
 });

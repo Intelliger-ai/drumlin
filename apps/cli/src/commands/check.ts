@@ -46,7 +46,9 @@ export async function checkCommand(
   const result = await engine.request("check.run", {
     root,
     cache: flagBoolean(args, "cache", true),
-    ...(rulesFlag ? { rules: rulesFlag.split(",").map((id) => id.trim()) } : {}),
+    ...(rulesFlag
+      ? { rules: rulesFlag.split(",").map((id) => id.trim()) }
+      : {}),
     ...(changed ? { changed } : {}),
     ...(observed ? { observed } : {}),
   });
@@ -90,7 +92,10 @@ export async function checkCommand(
         2,
       )}\n`,
     );
-    return exitCodeFor(args, shown.map((entry) => entry.finding.severity));
+    return exitCodeFor(
+      args,
+      shown.map((entry) => entry.finding.severity),
+    );
   }
 
   const lines: string[] = [];
@@ -131,7 +136,9 @@ export async function checkCommand(
     );
     // Worth saying out loud, because DEC-0002 originally promised the opposite
     // and someone reading this output will want to know which one happened.
-    lines.push(dim("(every rule ran over the whole graph; only the report is scoped)"));
+    lines.push(
+      dim("(every rule ran over the whole graph; only the report is scoped)"),
+    );
   }
   // Retargeting has to be visible. It rewrites what an issue points at, so
   // that a `UX-` number survives a rename — and a number that quietly changes
@@ -155,9 +162,7 @@ export async function checkCommand(
       );
     }
     if (renames.renamed.length > RENAMES_SHOWN) {
-      lines.push(
-        dim(`  … ${renames.renamed.length - RENAMES_SHOWN} more`),
-      );
+      lines.push(dim(`  … ${renames.renamed.length - RENAMES_SHOWN} more`));
     }
   }
   // Ambiguity is reported but never acted on, so it is the case where a number
@@ -209,7 +214,10 @@ export async function checkCommand(
   }
 
   process.stdout.write(`${lines.join("\n")}\n`);
-  return exitCodeFor(args, shown.map((entry) => entry.finding.severity));
+  return exitCodeFor(
+    args,
+    shown.map((entry) => entry.finding.severity),
+  );
 }
 
 /**
@@ -223,10 +231,7 @@ export async function checkCommand(
  * an empty array: no flag means report everything, while a flag that found
  * nothing means report nothing.
  */
-function resolveChanged(
-  args: ParsedArgs,
-  root: string,
-): string[] | undefined {
+function resolveChanged(args: ParsedArgs, root: string): string[] | undefined {
   const value = args.flags.get("changed");
   if (value === undefined || value === false) return undefined;
 
@@ -252,7 +257,10 @@ function resolveChanged(
  * `--fail-on high` is opt-in so the tool can be trusted in a build once its
  * precision is known, rather than before.
  */
-function exitCodeFor(args: ParsedArgs, severities: readonly Severity[]): number {
+function exitCodeFor(
+  args: ParsedArgs,
+  severities: readonly Severity[],
+): number {
   const failOn = flagString(args, "fail-on") as Severity | undefined;
   if (!failOn) return 0;
   const threshold = severityRank(failOn);

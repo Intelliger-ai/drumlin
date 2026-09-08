@@ -1,11 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import {
-  IssueSchema,
-  issueId,
-  parseIssueId,
-  type Issue,
-} from "@drumlin/model";
+import { IssueSchema, issueId, parseIssueId, type Issue } from "@drumlin/model";
 import { repoPaths } from "./paths.js";
 
 /**

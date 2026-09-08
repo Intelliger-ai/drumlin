@@ -55,7 +55,8 @@ export interface PermissionInference {
 }
 
 /** Type names that plausibly enumerate application roles. */
-const ROLE_TYPE_NAME = /^(user)?roles?$|role(type|name|enum)$|^app(user)?role$/i;
+const ROLE_TYPE_NAME =
+  /^(user)?roles?$|role(type|name|enum)$|^app(user)?role$/i;
 
 /** Helper functions whose string arguments are roles by construction. */
 const ROLE_GUARD_FUNCTIONS = new Set([
@@ -138,7 +139,11 @@ export function inferPermissionModel(app: NextApp): PermissionInference {
           literal,
           `declared in the ${alias.getName()} union`,
           0.9,
-          { file: relFile, line: alias.getStartLineNumber(), symbol: alias.getName() },
+          {
+            file: relFile,
+            line: alias.getStartLineNumber(),
+            symbol: alias.getName(),
+          },
         );
       }
     }
@@ -178,7 +183,11 @@ export function inferPermissionModel(app: NextApp): PermissionInference {
         id: name,
         members,
         locations: [
-          { file: relFile, line: declaration.getStartLineNumber(), symbol: name },
+          {
+            file: relFile,
+            line: declaration.getStartLineNumber(),
+            symbol: name,
+          },
         ],
       });
     }
@@ -211,7 +220,11 @@ export function inferPermissionModel(app: NextApp): PermissionInference {
         file: relFile,
         line: call.getStartLineNumber(),
       };
-      guards.push({ check: call.getText().slice(0, 100), roles: found, location });
+      guards.push({
+        check: call.getText().slice(0, 100),
+        roles: found,
+        location,
+      });
       for (const role of found) {
         believe(roles, role, `passed to ${name}()`, 0.8, location);
       }
@@ -224,14 +237,12 @@ export function inferPermissionModel(app: NextApp): PermissionInference {
       const name = access.getName();
       if (!CAPABILITY_FLAG.test(name)) continue;
       const receiver = access.getExpression().getText();
-      if (!/(session|user|auth|account|member|profile)$/i.test(receiver)) continue;
-      believe(
-        capabilityFlags,
-        name,
-        `read from ${receiver}`,
-        0.7,
-        { file: relFile, line: access.getStartLineNumber() },
-      );
+      if (!/(session|user|auth|account|member|profile)$/i.test(receiver))
+        continue;
+      believe(capabilityFlags, name, `read from ${receiver}`, 0.7, {
+        file: relFile,
+        line: access.getStartLineNumber(),
+      });
     }
 
     // 5. Bare comparisons against a role-ish field. Recorded as questions.

@@ -21,7 +21,12 @@ function graph(): GraphDocument {
     layer: "expected",
     nodes: [
       { id: "screen.root", type: "Screen", route: "/", label: "/" },
-      { id: "screen.invoices", type: "Screen", route: "/invoices", label: "/invoices" },
+      {
+        id: "screen.invoices",
+        type: "Screen",
+        route: "/invoices",
+        label: "/invoices",
+      },
       {
         id: "screen.invoices.$id",
         type: "Screen",
@@ -56,7 +61,13 @@ class ScriptedPage implements PageProbe {
   async activate(name: string): Promise<ProbeResult> {
     this.activated.push(name);
     const scripted = this.onActivate[name];
-    return { url: `${BASE}/`, states: [], controls: [], errors: [], ...scripted };
+    return {
+      url: `${BASE}/`,
+      states: [],
+      controls: [],
+      errors: [],
+      ...scripted,
+    };
   }
 }
 
@@ -66,7 +77,10 @@ describe("walkGraph", () => {
     const observed = await walkGraph(graph(), page, { baseUrl: BASE });
 
     expect(observed.attempted).toEqual(["/", "/invoices"]);
-    expect(observed.visits.map((visit) => visit.route)).toEqual(["/", "/invoices"]);
+    expect(observed.visits.map((visit) => visit.route)).toEqual([
+      "/",
+      "/invoices",
+    ]);
   });
 
   it("leaves a dynamic route alone when it has no value for the segment", async () => {
@@ -91,7 +105,9 @@ describe("walkGraph", () => {
     expect(page.opened).toContain(`${BASE}/invoices/42`);
     // Recorded under the pattern, not the concrete URL, so the diff can match
     // it against the graph node.
-    const visit = observed.visits.find((entry) => entry.route === "/invoices/[id]");
+    const visit = observed.visits.find(
+      (entry) => entry.route === "/invoices/[id]",
+    );
     expect(visit?.requested).toBe("/invoices/42");
   });
 
@@ -107,7 +123,9 @@ describe("walkGraph", () => {
       edges: [],
     });
 
-    const observed = await walkGraph(deep, new ScriptedPage(), { baseUrl: BASE });
+    const observed = await walkGraph(deep, new ScriptedPage(), {
+      baseUrl: BASE,
+    });
 
     // Matters only when `maxVisits` cuts the walk short, which is exactly when
     // you want the pages nearest the entry point rather than an arbitrary set.
@@ -226,7 +244,9 @@ describe("walkGraph", () => {
 
     it("reads an href instead of spending a page load on it", async () => {
       const page = new ScriptedPage({
-        "/": { controls: [{ role: "link", name: "Invoices", href: "/invoices" }] },
+        "/": {
+          controls: [{ role: "link", name: "Invoices", href: "/invoices" }],
+        },
       });
 
       const observed = await walkGraph(graph(), page, {

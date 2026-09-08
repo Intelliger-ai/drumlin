@@ -98,12 +98,16 @@ export async function walkGraph(
 
   const screens = view
     .nodesOfType("Screen")
-    .filter((screen): screen is GraphNode & { route: string } =>
-      typeof screen.route === "string",
+    .filter(
+      (screen): screen is GraphNode & { route: string } =>
+        typeof screen.route === "string",
     )
     // Shallowest first. If the walk is going to be cut short by `maxVisits`,
     // the routes nearest the entry points are the ones worth having.
-    .sort((a, b) => depth(a.route) - depth(b.route) || a.route.localeCompare(b.route));
+    .sort(
+      (a, b) =>
+        depth(a.route) - depth(b.route) || a.route.localeCompare(b.route),
+    );
 
   for (const screen of screens) {
     if (exclude.has(screen.route)) continue;

@@ -31,7 +31,8 @@ export interface Activation {
 export function readActivation(root: string): Activation {
   const paths = repoPaths(root);
   if (!existsSync(paths.dir)) return { initialised: false, active: false };
-  if (!existsSync(paths.configFile)) return { initialised: true, active: false };
+  if (!existsSync(paths.configFile))
+    return { initialised: true, active: false };
 
   try {
     const document = parseDocument(readFileSync(paths.configFile, "utf8"));

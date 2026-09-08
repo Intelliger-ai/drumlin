@@ -55,9 +55,11 @@ export class SessionStore {
    * the `stop` hook finds the baseline without the two hooks having to pass
    * state between themselves.
    */
-  start(record: Omit<SessionRecord, "id" | "changed" | "touchedAt"> & {
-    id?: string;
-  }): SessionRecord {
+  start(
+    record: Omit<SessionRecord, "id" | "changed" | "touchedAt"> & {
+      id?: string;
+    },
+  ): SessionRecord {
     this.sweep();
     const session: SessionRecord = {
       id: record.id ?? randomUUID(),
@@ -92,7 +94,11 @@ export class SessionStore {
   }
 
   /** Record changed paths. Returns the session, or undefined if unknown. */
-  touch(id: string, files: readonly string[], now: string): SessionRecord | undefined {
+  touch(
+    id: string,
+    files: readonly string[],
+    now: string,
+  ): SessionRecord | undefined {
     const session = this.read(id);
     if (!session) return undefined;
 
@@ -116,7 +122,10 @@ export class SessionStore {
    * counts as pre-existing, because it has been said and repeating it is how a
    * tool gets ignored.
    */
-  absorb(id: string, fingerprints: readonly string[]): SessionRecord | undefined {
+  absorb(
+    id: string,
+    fingerprints: readonly string[],
+  ): SessionRecord | undefined {
     if (fingerprints.length === 0) return this.read(id);
     const session = this.read(id);
     if (!session) return undefined;

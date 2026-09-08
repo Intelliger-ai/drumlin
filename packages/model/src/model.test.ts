@@ -45,7 +45,9 @@ describe("ids", () => {
 
   test("dynamic segments collapse to their parameter name", () => {
     expect(routeToScreenId("/invoices/[id]")).toBe("screen.invoices.id");
-    expect(routeToScreenId("/docs/[...slug]")).toBe("screen.docs.slug-catchall");
+    expect(routeToScreenId("/docs/[...slug]")).toBe(
+      "screen.docs.slug-catchall",
+    );
     expect(routeToScreenId("/shop/[[...all]]")).toBe(
       "screen.shop.all-optional-catchall",
     );

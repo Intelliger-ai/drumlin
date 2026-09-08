@@ -33,13 +33,18 @@ export async function probeSocket(paths = daemonPaths()): Promise<SocketProbe> {
   const reachable = await canConnect(paths.socketFile);
   if (reachable) {
     const pid = readPid(paths);
-    return pid === undefined ? { state: "listening" } : { state: "listening", pid };
+    return pid === undefined
+      ? { state: "listening" }
+      : { state: "listening", pid };
   }
   return { state: "stale" };
 }
 
 /** Connect and hang up, purely to learn whether anything is on the far end. */
-export function canConnect(socketFile: string, timeoutMs = 1_000): Promise<boolean> {
+export function canConnect(
+  socketFile: string,
+  timeoutMs = 1_000,
+): Promise<boolean> {
   return new Promise((resolve) => {
     const socket = createConnection(socketFile);
     let settled = false;
@@ -59,7 +64,10 @@ export function canConnect(socketFile: string, timeoutMs = 1_000): Promise<boole
 
 export function readPid(paths = daemonPaths()): number | undefined {
   try {
-    const value = Number.parseInt(readFileSync(paths.pidFile, "utf8").trim(), 10);
+    const value = Number.parseInt(
+      readFileSync(paths.pidFile, "utf8").trim(),
+      10,
+    );
     return Number.isInteger(value) && value > 0 ? value : undefined;
   } catch {
     return undefined;

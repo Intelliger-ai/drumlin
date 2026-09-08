@@ -144,7 +144,11 @@ function redirected(
     severity: "high",
     confidence: 0.8,
     classification: "runtime",
-    target: { kind: "node", node: screen.id, route: screen.route ?? visit.route },
+    target: {
+      kind: "node",
+      node: screen.id,
+      route: screen.route ?? visit.route,
+    },
     evidence: [
       {
         type: "runtime",
@@ -221,7 +225,7 @@ function missingStates(
       acceptance: [
         `The ${kind} state is observable on ${screen.route ?? screen.id}.`,
       ],
-      });
+    });
   }
 
   return findings;
@@ -235,7 +239,10 @@ function missingStates(
  * lacks — none of which the harness can arrange, so their absence from a run
  * says nothing.
  */
-const OBSERVABLE_WITHOUT_FIXTURES = new Set<StateKind>(["loading", "submitting"]);
+const OBSERVABLE_WITHOUT_FIXTURES = new Set<StateKind>([
+  "loading",
+  "submitting",
+]);
 
 /**
  * Navigations the source promises that the browser did not honour.
@@ -255,7 +262,9 @@ function brokenTransitions(
     if (transition.kind === "redirect") continue;
     if (!attempted.has(transition.from)) continue;
 
-    const from = view.nodesOfType("Screen").find((node) => node.route === transition.from);
+    const from = view
+      .nodesOfType("Screen")
+      .find((node) => node.route === transition.from);
     if (!from) continue;
 
     // What the source says clicking this leads to. Compared as a set because a
@@ -304,7 +313,7 @@ function brokenTransitions(
       acceptance: [
         `Navigation from ${transition.from} matches what the source describes.`,
       ],
-      });
+    });
   }
 
   return findings;
@@ -337,8 +346,10 @@ function consoleErrors(
         `${screen.route ?? screen.id} logged ${visit.errors.length} error(s) ` +
         `while rendering. The page may still look correct and be failing for ` +
         `some of its users.`,
-      acceptance: [`${screen.route ?? screen.id} renders without console errors.`],
-      },
+      acceptance: [
+        `${screen.route ?? screen.id} renders without console errors.`,
+      ],
+    },
   ];
 }
 
@@ -377,7 +388,7 @@ function undeclared(view: GraphView, observed: ObservedGraph): Finding[] {
       proposal:
         "Most often this is Drumlin's blind spot rather than a product " +
         "problem — a route defined in a way the indexer does not recognise.",
-      });
+    });
   }
 
   return findings;

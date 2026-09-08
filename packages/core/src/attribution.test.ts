@@ -83,7 +83,9 @@ describe("findingFiles", () => {
     const view = new GraphView(graphWith({}));
     const files = findingFiles(
       finding({
-        evidence: [{ type: "source", location: { file: "src/app/page.tsx", line: 4 } }],
+        evidence: [
+          { type: "source", location: { file: "src/app/page.tsx", line: 4 } },
+        ],
       }),
       view,
     );
@@ -133,8 +135,12 @@ describe("attributeFindings", () => {
   );
 
   it("keeps findings inside the cone and sets the rest aside", () => {
-    const inside = finding({ target: { kind: "node", node: "screen.invoices.id" } });
-    const outside = finding({ target: { kind: "node", node: "screen.settings" } });
+    const inside = finding({
+      target: { kind: "node", node: "screen.invoices.id" },
+    });
+    const outside = finding({
+      target: { kind: "node", node: "screen.settings" },
+    });
 
     const result = attributeFindings(
       [inside, outside],
@@ -156,7 +162,11 @@ describe("attributeFindings", () => {
       evidence: [{ type: "context", note: "no design system detected" }],
     });
 
-    const result = attributeFindings([unplaceable], new Set(["anything.tsx"]), view);
+    const result = attributeFindings(
+      [unplaceable],
+      new Set(["anything.tsx"]),
+      view,
+    );
 
     expect(result.attributed).toEqual([unplaceable]);
     expect(result.elsewhere).toEqual([]);
@@ -175,10 +185,9 @@ describe("attributeFindings", () => {
 
     const result = attributeFindings(
       [orphan],
-      dependentCone(
-        { "src/app/invoices/[id]/page.tsx": ["src/lib/api.ts"] },
-        ["src/app/invoices/[id]/page.tsx"],
-      ),
+      dependentCone({ "src/app/invoices/[id]/page.tsx": ["src/lib/api.ts"] }, [
+        "src/app/invoices/[id]/page.tsx",
+      ]),
       view,
     );
 

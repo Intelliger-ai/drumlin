@@ -108,7 +108,9 @@ function realpathOf(path: string): string {
  * that started it; a CLI invocation that exits must not take the warm graph
  * with it. Diagnostics go to the daemon's own log instead.
  */
-export async function spawnDaemon(options: SpawnOptions = {}): Promise<boolean> {
+export async function spawnDaemon(
+  options: SpawnOptions = {},
+): Promise<boolean> {
   const paths = options.paths ?? daemonPaths();
   const command = options.command ?? daemonCommand();
   const [executable, ...args] = command;

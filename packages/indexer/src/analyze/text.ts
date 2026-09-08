@@ -43,10 +43,7 @@ export function textWithoutComments(sourceFile: SourceFile): string {
       ranges.push([range.getPos(), range.getEnd()]);
     }
     // `{/* ... */}` parses as a JSX expression with nothing in it.
-    if (
-      Node.isJsxExpression(node) &&
-      node.getExpression() === undefined
-    ) {
+    if (Node.isJsxExpression(node) && node.getExpression() === undefined) {
       ranges.push([node.getStart(), node.getEnd()]);
     }
     node.forEachChild(visit);
@@ -55,7 +52,11 @@ export function textWithoutComments(sourceFile: SourceFile): string {
 
   const characters = [...text];
   for (const [start, end] of ranges) {
-    for (let index = start; index < end && index < characters.length; index += 1) {
+    for (
+      let index = start;
+      index < end && index < characters.length;
+      index += 1
+    ) {
       if (characters[index] !== "\n") characters[index] = " ";
     }
   }

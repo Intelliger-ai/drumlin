@@ -85,7 +85,8 @@ export function findScreen(
 
   // A concrete URL such as `/invoices/123` has to find `/invoices/[id]`.
   return view.screens.find(
-    (screen) => screen.route !== undefined && matchesPattern(screen.route, normalized),
+    (screen) =>
+      screen.route !== undefined && matchesPattern(screen.route, normalized),
   );
 }
 

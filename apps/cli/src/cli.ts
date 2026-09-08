@@ -119,7 +119,11 @@ export async function run(
     return 0;
   }
 
-  if (args.flags.has("help") || args.flags.has("h") || args.command === "help") {
+  if (
+    args.flags.has("help") ||
+    args.flags.has("h") ||
+    args.command === "help"
+  ) {
     process.stdout.write(USAGE);
     return 0;
   }
@@ -170,7 +174,9 @@ export async function run(
 }
 
 type EngineCommand = (
-  engine: Awaited<ReturnType<typeof import("@drumlin/client").resolveEngine>>["engine"],
+  engine: Awaited<
+    ReturnType<typeof import("@drumlin/client").resolveEngine>
+  >["engine"],
   args: ParsedArgs,
   cwd: string,
 ) => Promise<number>;
@@ -216,9 +222,7 @@ export const COMMANDS: readonly string[] = [
 /** The usage text, exported so a test can hold it against `COMMANDS`. */
 export const usage = (): string => USAGE;
 
-async function engineCommand(
-  name: string,
-): Promise<EngineCommand | undefined> {
+async function engineCommand(name: string): Promise<EngineCommand | undefined> {
   return ENGINE_COMMANDS[name]?.();
 }
 

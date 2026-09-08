@@ -106,9 +106,7 @@ function newIssue(
     message: finding.message,
     detectedAt: input.now,
     updatedAt: input.now,
-    history: [
-      { at: input.now, to: "detected", by: "rule-engine" },
-    ],
+    history: [{ at: input.now, to: "detected", by: "rule-engine" }],
   };
   if (finding.principles) issue.principles = finding.principles;
   if (finding.proposal) issue.proposal = finding.proposal;

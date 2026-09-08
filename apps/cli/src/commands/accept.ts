@@ -226,9 +226,7 @@ async function listAccepted(
 
   const unattested = accepted.filter((entry) => !entry.attested);
 
-  process.stdout.write(
-    `${accepted.length} accepted, so not reported:\n\n`,
-  );
+  process.stdout.write(`${accepted.length} accepted, so not reported:\n\n`);
 
   for (const entry of accepted) {
     process.stdout.write(
@@ -322,7 +320,9 @@ export async function declineCommand(
 ): Promise<number> {
   const [id] = args.positional;
   if (!id) {
-    process.stderr.write("Usage: drumlin decline <UX-id> [--reason \"why not\"]\n");
+    process.stderr.write(
+      'Usage: drumlin decline <UX-id> [--reason "why not"]\n',
+    );
     return 1;
   }
 
@@ -335,7 +335,9 @@ export async function declineCommand(
   });
 
   if (result.declined === 0) {
-    process.stdout.write(`${result.issue.id} has no proposal awaiting a decision.\n`);
+    process.stdout.write(
+      `${result.issue.id} has no proposal awaiting a decision.\n`,
+    );
     return 0;
   }
 

@@ -78,7 +78,9 @@ function cliRun(args) {
 }
 
 function check(label, condition, detail = "") {
-  console.log(`  ${condition ? "ok  " : "FAIL"} ${label}${detail ? `  ${detail}` : ""}`);
+  console.log(
+    `  ${condition ? "ok  " : "FAIL"} ${label}${detail ? `  ${detail}` : ""}`,
+  );
   if (!condition) failures += 1;
 }
 
@@ -146,7 +148,9 @@ check(
 // above, and the `stop` hook follows up on nothing below that — an orphaned
 // route is a medium and stays in the report where it belongs. Getting this
 // wrong is how the loop starts spending agent turns on cosmetics.
-console.log("\nturn 2 — the agent adds a screen that fetches with no error state");
+console.log(
+  "\nturn 2 — the agent adds a screen that fetches with no error state",
+);
 const orphan = join(root, "src", "app", "loop-probe-orphan", "page.tsx");
 mkdirSync(dirname(orphan), { recursive: true });
 writeFileSync(
@@ -174,7 +178,11 @@ const edit = await hook(
   env,
 );
 console.log(`  afterFileEdit ${edit.__ms.toFixed(0)}ms`);
-check("afterFileEdit stayed under 500ms", edit.__ms < 500, `${edit.__ms.toFixed(0)}ms`);
+check(
+  "afterFileEdit stayed under 500ms",
+  edit.__ms < 500,
+  `${edit.__ms.toFixed(0)}ms`,
+);
 
 // The daemon debounces, as it would mid-turn.
 await new Promise((r) => setTimeout(r, 2_000));
@@ -190,7 +198,11 @@ check(
   Boolean(followed.followup_message),
   `${followed.__ms.toFixed(0)}ms`,
 );
-check("stop stayed under 2s", followed.__ms < 2_000, `${followed.__ms.toFixed(0)}ms`);
+check(
+  "stop stayed under 2s",
+  followed.__ms < 2_000,
+  `${followed.__ms.toFixed(0)}ms`,
+);
 
 if (followed.followup_message) {
   console.log("\n  ── message sent to the agent ──");
@@ -287,12 +299,13 @@ await hook(
 await new Promise((r) => setTimeout(r, 2_500));
 
 const after = cliRun(["check", "--app", root]);
-check(
-  "the finding is gone once the code is",
-  !after.includes("loop-probe"),
-);
+check("the finding is gone once the code is", !after.includes("loop-probe"));
 
-await hook("stop", { ...base, hook_event_name: "stop", status: "completed" }, env);
+await hook(
+  "stop",
+  { ...base, hook_event_name: "stop", status: "completed" },
+  env,
+);
 
 console.log(
   failures === 0

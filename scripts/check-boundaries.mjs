@@ -17,7 +17,10 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 const PURE_PACKAGES = ["packages/model", "packages/core", "packages/protocol"];
 
 const NODE_BUILTINS = [
-  { pattern: /^node:/, why: "Node built-in (core must not touch the platform)" },
+  {
+    pattern: /^node:/,
+    why: "Node built-in (core must not touch the platform)",
+  },
   {
     pattern: /^(fs|path|os|crypto|child_process|worker_threads|net|url|util)$/,
     why: "Node built-in",
@@ -42,7 +45,10 @@ const IMPURE_PACKAGES = [
  * asked over a socket is a rule that cannot be translated.
  */
 const TRANSPORT_PACKAGES = [
-  { pattern: /^@drumlin\/protocol$/, why: "transport (core must not know it exists)" },
+  {
+    pattern: /^@drumlin\/protocol$/,
+    why: "transport (core must not know it exists)",
+  },
   { pattern: /^@drumlin\/client$/, why: "transport" },
   { pattern: /^@drumlin\/daemon$/, why: "transport" },
 ];

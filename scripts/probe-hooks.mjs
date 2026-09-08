@@ -96,7 +96,12 @@ const base = { workspace_roots: [root], conversation_id: conversation };
 console.log(`workspace ${root}\n`);
 
 // 1. Window opens. Warms the daemon, must not wait for a cold index.
-report(await runHook("workspace-open", { ...base, hook_event_name: "workspaceOpen" }));
+report(
+  await runHook("workspace-open", {
+    ...base,
+    hook_event_name: "workspaceOpen",
+  }),
+);
 
 // Give the daemon a moment to finish its first parse, as a real session would.
 await new Promise((r) => setTimeout(r, 3_000));

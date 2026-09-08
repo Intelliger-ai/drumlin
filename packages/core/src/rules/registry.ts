@@ -1,15 +1,8 @@
-import {
-  duplicatePrimitive,
-  selectOverload,
-} from "./design-system.js";
+import { duplicatePrimitive, selectOverload } from "./design-system.js";
 import { deadEnd, orphan } from "./flow.js";
 import { dropsSearchParams } from "./navigation.js";
 import { destructiveNoConfirm, mutationNoFeedback } from "./mutation.js";
-import {
-  noErrorState,
-  noLoadingState,
-  noNotFoundState,
-} from "./state.js";
+import { noErrorState, noLoadingState, noNotFoundState } from "./state.js";
 import type { Rule } from "./types.js";
 
 /**

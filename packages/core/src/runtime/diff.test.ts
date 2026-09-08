@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { parseGraphDocument } from "@drumlin/model";
-import type { GraphDocument, ObservedGraph, ObservedVisit } from "@drumlin/model";
+import type {
+  GraphDocument,
+  ObservedGraph,
+  ObservedVisit,
+} from "@drumlin/model";
 import { diffObserved, RUNTIME_RULES } from "./diff.js";
 
 /**
@@ -26,7 +30,12 @@ function graph(): GraphDocument {
     schemaVersion: 1,
     layer: "expected",
     nodes: [
-      { id: "screen.invoices", type: "Screen", route: "/invoices", label: "/invoices" },
+      {
+        id: "screen.invoices",
+        type: "Screen",
+        route: "/invoices",
+        label: "/invoices",
+      },
       {
         id: "screen.invoices.$id",
         type: "Screen",
@@ -39,7 +48,12 @@ function graph(): GraphDocument {
         stateKind: "loading",
         label: "loading",
       },
-      { id: "state.invoices.error", type: "State", stateKind: "error", label: "error" },
+      {
+        id: "state.invoices.error",
+        type: "State",
+        stateKind: "error",
+        label: "error",
+      },
     ],
     edges: [
       {
@@ -47,7 +61,11 @@ function graph(): GraphDocument {
         to: "screen.invoices.$id",
         type: "transitions_to",
       },
-      { from: "screen.invoices", to: "state.invoices.loading", type: "contains" },
+      {
+        from: "screen.invoices",
+        to: "state.invoices.loading",
+        type: "contains",
+      },
       { from: "screen.invoices", to: "state.invoices.error", type: "contains" },
     ],
   });
@@ -120,7 +138,9 @@ describe("diffObserved", () => {
         }),
       );
 
-      const redirect = findings.find((f) => f.ruleId === RUNTIME_RULES.redirected);
+      const redirect = findings.find(
+        (f) => f.ruleId === RUNTIME_RULES.redirected,
+      );
       expect(redirect).toBeDefined();
       expect(redirect?.message).toContain("/login");
       expect(redirect?.severity).toBe("high");
@@ -159,7 +179,9 @@ describe("diffObserved", () => {
 
       // Not a redirect. A pagination query and a trailing slash are the same
       // screen, and calling them a redirect would make the check unusable.
-      expect(findings.filter((f) => f.ruleId === RUNTIME_RULES.redirected)).toEqual([]);
+      expect(
+        findings.filter((f) => f.ruleId === RUNTIME_RULES.redirected),
+      ).toEqual([]);
     });
   });
 
@@ -170,17 +192,24 @@ describe("diffObserved", () => {
         run({ attempted: ["/invoices"], visits: [visit({ states: [] })] }),
       );
 
-      const missing = findings.find((f) => f.ruleId === RUNTIME_RULES.missingState);
+      const missing = findings.find(
+        (f) => f.ruleId === RUNTIME_RULES.missingState,
+      );
       expect(missing?.target.node).toBe("state.invoices.loading");
     });
 
     it("stays quiet once the state has been seen", () => {
       const findings = diffObserved(
         graph(),
-        run({ attempted: ["/invoices"], visits: [visit({ states: ["loading"] })] }),
+        run({
+          attempted: ["/invoices"],
+          visits: [visit({ states: ["loading"] })],
+        }),
       );
 
-      expect(findings.filter((f) => f.ruleId === RUNTIME_RULES.missingState)).toEqual([]);
+      expect(
+        findings.filter((f) => f.ruleId === RUNTIME_RULES.missingState),
+      ).toEqual([]);
     });
 
     it("never reports an error state as missing", () => {
@@ -190,7 +219,10 @@ describe("diffObserved", () => {
       // boundary carries a permanent false finding.
       const findings = diffObserved(
         graph(),
-        run({ attempted: ["/invoices"], visits: [visit({ states: ["loading"] })] }),
+        run({
+          attempted: ["/invoices"],
+          visits: [visit({ states: ["loading"] })],
+        }),
       );
 
       for (const finding of findings) {
@@ -207,7 +239,12 @@ describe("diffObserved", () => {
           attempted: ["/invoices"],
           visits: [visit({ states: ["loading"] })],
           transitions: [
-            { from: "/invoices", to: "/dashboard", kind: "click", via: "INV-1" },
+            {
+              from: "/invoices",
+              to: "/dashboard",
+              kind: "click",
+              via: "INV-1",
+            },
           ],
         }),
       );
@@ -219,7 +256,9 @@ describe("diffObserved", () => {
       expect(broken?.message).toContain("/dashboard");
       // The expectation has to be in the message, or the finding is unactionable.
       expect(broken?.message).toContain("/invoices/[id]");
-      expect(broken?.evidence.some((e) => e.note?.includes("INV-1"))).toBe(true);
+      expect(broken?.evidence.some((e) => e.note?.includes("INV-1"))).toBe(
+        true,
+      );
     });
 
     it("accepts a click that matches the source", () => {
@@ -229,7 +268,12 @@ describe("diffObserved", () => {
           attempted: ["/invoices"],
           visits: [visit({ states: ["loading"] })],
           transitions: [
-            { from: "/invoices", to: "/invoices/[id]", kind: "click", via: "INV-1" },
+            {
+              from: "/invoices",
+              to: "/invoices/[id]",
+              kind: "click",
+              via: "INV-1",
+            },
           ],
         }),
       );
@@ -291,7 +335,9 @@ describe("diffObserved", () => {
         }),
       );
 
-      const error = findings.find((f) => f.ruleId === RUNTIME_RULES.consoleError);
+      const error = findings.find(
+        (f) => f.ruleId === RUNTIME_RULES.consoleError,
+      );
       expect(error?.message).toContain("5 error");
       // Five errors on one page is one finding with a sample, not five
       // findings or a wall of evidence.
@@ -306,14 +352,23 @@ describe("diffObserved", () => {
         graph(),
         run({
           attempted: ["/invoices"],
-          visits: [visit({ states: ["loading"] }), visit({ route: "/surprise", requested: "/surprise", settled: "/surprise" })],
+          visits: [
+            visit({ states: ["loading"] }),
+            visit({
+              route: "/surprise",
+              requested: "/surprise",
+              settled: "/surprise",
+            }),
+          ],
         }),
       );
 
       // A route the browser found and the indexer missed is usually Drumlin's
       // blind spot. Putting our own gaps on the developer's list by default is
       // how a tool loses credibility.
-      expect(findings.filter((f) => f.ruleId === RUNTIME_RULES.undeclared)).toEqual([]);
+      expect(
+        findings.filter((f) => f.ruleId === RUNTIME_RULES.undeclared),
+      ).toEqual([]);
     });
 
     it("reports them when asked", () => {
@@ -323,13 +378,19 @@ describe("diffObserved", () => {
           attempted: ["/invoices"],
           visits: [
             visit({ states: ["loading"] }),
-            visit({ route: "/surprise", requested: "/surprise", settled: "/surprise" }),
+            visit({
+              route: "/surprise",
+              requested: "/surprise",
+              settled: "/surprise",
+            }),
           ],
         }),
         { reportUndeclared: true },
       );
 
-      const undeclared = findings.find((f) => f.ruleId === RUNTIME_RULES.undeclared);
+      const undeclared = findings.find(
+        (f) => f.ruleId === RUNTIME_RULES.undeclared,
+      );
       expect(undeclared?.target.route).toBe("/surprise");
       expect(undeclared?.severity).toBe("low");
       expect(undeclared?.proposal).toContain("blind spot");

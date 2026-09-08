@@ -99,10 +99,18 @@ describe("graph identity", () => {
       // The id embeds the path, so this is a rename as far as ids go. The
       // symbol is untouched, which is the strongest signal available.
       const before = graph([
-        component("component.src-components-table.tsx.Table", "src/components/table.tsx", "Table"),
+        component(
+          "component.src-components-table.tsx.Table",
+          "src/components/table.tsx",
+          "Table",
+        ),
       ]);
       const after = graph([
-        component("component.src-ui-table.tsx.Table", "src/ui/table.tsx", "Table"),
+        component(
+          "component.src-ui-table.tsx.Table",
+          "src/ui/table.tsx",
+          "Table",
+        ),
       ]);
 
       const match = matchGraphs(before, after);
@@ -119,7 +127,9 @@ describe("graph identity", () => {
       // `actionIdFor` qualifies by path only on a name collision, so adding an
       // unrelated second `approve` elsewhere renames this node. Nothing about
       // this node changed at all.
-      const before = graph([action("action.approve", "src/lib/a.ts", "approve")]);
+      const before = graph([
+        action("action.approve", "src/lib/a.ts", "approve"),
+      ]);
       const after = graph([
         action("action.src-lib-a.ts.approve", "src/lib/a.ts", "approve"),
         action("action.src-lib-b.ts.approve", "src/lib/b.ts", "approve"),
@@ -139,8 +149,12 @@ describe("graph identity", () => {
     });
 
     it("follows a renamed symbol in a file that did not move", () => {
-      const before = graph([action("action.approve-invoice", "src/lib/a.ts", "approveInvoice")]);
-      const after = graph([action("action.approve", "src/lib/a.ts", "approve")]);
+      const before = graph([
+        action("action.approve-invoice", "src/lib/a.ts", "approveInvoice"),
+      ]);
+      const after = graph([
+        action("action.approve", "src/lib/a.ts", "approve"),
+      ]);
 
       const match = matchGraphs(before, after);
 
@@ -179,9 +193,9 @@ describe("graph identity", () => {
 
       const match = matchGraphs(before, after);
 
-      expect(match.renamed.map((entry) => [entry.before, entry.after])).toEqual([
-        ["screen.invoices", "screen.bills"],
-      ]);
+      expect(match.renamed.map((entry) => [entry.before, entry.after])).toEqual(
+        [["screen.invoices", "screen.bills"]],
+      );
       expect(match.renamed[0]?.because).toContain("neighbourhood");
     });
   });
@@ -190,7 +204,12 @@ describe("graph identity", () => {
     it("never matches across node types", () => {
       // A Screen does not become an Action, however similar the evidence.
       const before = graph([
-        { id: "screen.pay", type: "Screen", route: "/pay", sources: [{ file: "a.ts", symbol: "pay" }] },
+        {
+          id: "screen.pay",
+          type: "Screen",
+          route: "/pay",
+          sources: [{ file: "a.ts", symbol: "pay" }],
+        },
       ]);
       const after = graph([action("action.pay", "a.ts", "pay")]);
 
@@ -202,8 +221,12 @@ describe("graph identity", () => {
     });
 
     it("does not match two unrelated screens that merely both exist", () => {
-      const before = graph([screen("screen.invoices", "/invoices", "app/invoices/page.tsx")]);
-      const after = graph([screen("screen.settings", "/settings", "app/settings/page.tsx")]);
+      const before = graph([
+        screen("screen.invoices", "/invoices", "app/invoices/page.tsx"),
+      ]);
+      const after = graph([
+        screen("screen.settings", "/settings", "app/settings/page.tsx"),
+      ]);
 
       const match = matchGraphs(before, after);
 
@@ -215,7 +238,9 @@ describe("graph identity", () => {
     it("refuses a near-tie instead of picking a winner", () => {
       // Two candidates that are equally plausible successors. The honest
       // answer is "I do not know", not whichever scored a hair higher.
-      const before = graph([component("component.old.Table", "src/table.tsx", "Table")]);
+      const before = graph([
+        component("component.old.Table", "src/table.tsx", "Table"),
+      ]);
       const after = graph([
         component("component.a.Table", "src/a/table.tsx", "Table"),
         component("component.b.Table", "src/b/table.tsx", "Table"),
@@ -256,19 +281,25 @@ describe("graph identity", () => {
       // multi-candidate version of this is caught by the margin check and
       // comes back ambiguous instead.
       const before = graph(
-        [screen("screen.root", "/", "app/page.tsx"), screen("screen.a", "/a", "app/a/page.tsx")],
+        [
+          screen("screen.root", "/", "app/page.tsx"),
+          screen("screen.a", "/a", "app/a/page.tsx"),
+        ],
         [transition("screen.root", "screen.a")],
       );
       const after = graph(
-        [screen("screen.root", "/", "app/page.tsx"), screen("screen.b", "/b", "app/b/page.tsx")],
+        [
+          screen("screen.root", "/", "app/page.tsx"),
+          screen("screen.b", "/b", "app/b/page.tsx"),
+        ],
         [transition("screen.root", "screen.b")],
       );
 
       const match = matchGraphs(before, after);
 
-      expect(match.renamed.map((entry) => [entry.before, entry.after])).toEqual([
-        ["screen.a", "screen.b"],
-      ]);
+      expect(match.renamed.map((entry) => [entry.before, entry.after])).toEqual(
+        [["screen.a", "screen.b"]],
+      );
       expect(match.renamed[0]?.because).toEqual(["neighbourhood"]);
     });
 
@@ -335,10 +366,18 @@ describe("graph identity", () => {
       // A snapshot is what gets persisted as a baseline, so matching against
       // one has to give the same answer as matching against a live graph.
       const before = graph([
-        component("component.src-a-table.tsx.Table", "src/a/table.tsx", "Table"),
+        component(
+          "component.src-a-table.tsx.Table",
+          "src/a/table.tsx",
+          "Table",
+        ),
       ]);
       const after = graph([
-        component("component.src-b-table.tsx.Table", "src/b/table.tsx", "Table"),
+        component(
+          "component.src-b-table.tsx.Table",
+          "src/b/table.tsx",
+          "Table",
+        ),
       ]);
 
       const viaSnapshot = matchGraphs(

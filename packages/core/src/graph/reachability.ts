@@ -1,4 +1,8 @@
-import { withoutLocaleSegments, type GraphNode, type NodeId } from "@drumlin/model";
+import {
+  withoutLocaleSegments,
+  type GraphNode,
+  type NodeId,
+} from "@drumlin/model";
 import type { GraphView } from "./view.js";
 
 export { withoutLocaleSegments };
@@ -36,8 +40,8 @@ const ENTRY_ROUTE_PATTERNS: readonly RegExp[] = [
 ];
 
 /** Dynamic segments that name a secret, meaning the URL arrives from outside. */
-const TOKEN_SEGMENT = /\[(\.\.\.)?[^\]]*(token|code|secret|key|hash|nonce|otp)[^\]]*\]/i;
-
+const TOKEN_SEGMENT =
+  /\[(\.\.\.)?[^\]]*(token|code|secret|key|hash|nonce|otp)[^\]]*\]/i;
 
 export interface EntryPointOptions {
   /** Routes the user declared as entry points, which always win. */
@@ -168,7 +172,9 @@ export function deadEnds(view: GraphView): DeadEnd[] {
   }
 
   return found.sort((a, b) =>
-    (a.screen.route ?? a.screen.id).localeCompare(b.screen.route ?? b.screen.id),
+    (a.screen.route ?? a.screen.id).localeCompare(
+      b.screen.route ?? b.screen.id,
+    ),
   );
 }
 

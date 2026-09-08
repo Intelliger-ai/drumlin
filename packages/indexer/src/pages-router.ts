@@ -99,8 +99,7 @@ export function collectPagesRoutes(pagesDir: string): PagesTree {
         continue;
       }
 
-      const routeSegments =
-        stem === "index" ? segments : [...segments, stem];
+      const routeSegments = stem === "index" ? segments : [...segments, stem];
       const route =
         routeSegments.length === 0 ? "/" : `/${routeSegments.join("/")}`;
       routes.push({ file: full, route });

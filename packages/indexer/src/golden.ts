@@ -65,9 +65,7 @@ export function compareToGolden(
     }
   }
 
-  const actualEdges = new Set(
-    actual.edges.map((edge) => edgeKey(edge)),
-  );
+  const actualEdges = new Set(actual.edges.map((edge) => edgeKey(edge)));
 
   for (const expectedEdge of expected.edges) {
     if (actualEdges.has(edgeKey(expectedEdge))) continue;

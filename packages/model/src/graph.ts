@@ -55,7 +55,13 @@ export const EDGE_TYPES = [
 export const EdgeTypeSchema = z.enum(EDGE_TYPES);
 export type EdgeType = z.infer<typeof EdgeTypeSchema>;
 
-export const RISK_LEVELS = ["none", "low", "medium", "high", "critical"] as const;
+export const RISK_LEVELS = [
+  "none",
+  "low",
+  "medium",
+  "high",
+  "critical",
+] as const;
 export const RiskLevelSchema = z.enum(RISK_LEVELS);
 export type RiskLevel = z.infer<typeof RiskLevelSchema>;
 

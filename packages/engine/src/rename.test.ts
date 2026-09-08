@@ -62,7 +62,10 @@ describe("renaming a route", () => {
   }
 
   async function check(): Promise<Issue[]> {
-    const { issues } = await engine.request("check.run", { root, cache: false });
+    const { issues } = await engine.request("check.run", {
+      root,
+      cache: false,
+    });
     return issues;
   }
 
@@ -73,13 +76,19 @@ describe("renaming a route", () => {
   it("carries an accepted issue onto the renamed node", async () => {
     const before = await check();
     const target = on(before, "screen.reports")[0];
-    expect(target, "fixture should produce a finding on /reports").toBeDefined();
+    expect(
+      target,
+      "fixture should produce a finding on /reports",
+    ).toBeDefined();
 
     const { issue: accepted } = await engine.request("issue.accept", {
       root,
       id: target!.id,
       reason: "reports genuinely has nothing to show yet",
-      attestation: ["interactive terminal", "confirmed at an interactive prompt"],
+      attestation: [
+        "interactive terminal",
+        "confirmed at an interactive prompt",
+      ],
     });
     expect(accepted.status).toBe("accepted");
 
@@ -175,7 +184,10 @@ describe("renaming a route", () => {
     // The recoverable failure. Without a baseline the resolver cannot tell a
     // rename from a delete, so ids are lost — which is why the file is
     // committed rather than cached, and why losing it must not crash.
-    rmSync(join(repoPaths(root).dir, "graph"), { recursive: true, force: true });
+    rmSync(join(repoPaths(root).dir, "graph"), {
+      recursive: true,
+      force: true,
+    });
     renameRoute("reports", "analytics");
 
     const after = await check();

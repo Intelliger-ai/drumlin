@@ -125,11 +125,15 @@ describe("reachability", () => {
   test("chrome navigation counts as a way to reach a screen", () => {
     // A sidebar link is a real way to get somewhere, even though it is not a
     // way onward from any particular screen.
-    expect(reachableFrom(view, ["screen.root"]).has("screen.viaChrome")).toBe(true);
+    expect(reachableFrom(view, ["screen.root"]).has("screen.viaChrome")).toBe(
+      true,
+    );
   });
 
   test("an unlinked screen is unreachable", () => {
-    expect(reachableFrom(view, ["screen.root"]).has("screen.hidden")).toBe(false);
+    expect(reachableFrom(view, ["screen.root"]).has("screen.hidden")).toBe(
+      false,
+    );
   });
 
   test("orphan detection reports only the unreachable screen", () => {
@@ -209,7 +213,11 @@ describe("dead-end detection", () => {
 describe("common route prefix", () => {
   test("finds the shared section", () => {
     expect(
-      commonRoutePrefix(["/portal/audit", "/portal/metrics/weekly", "/portal/x"]),
+      commonRoutePrefix([
+        "/portal/audit",
+        "/portal/metrics/weekly",
+        "/portal/x",
+      ]),
     ).toBe("/portal");
   });
 
@@ -242,7 +250,11 @@ describe("rules on a synthetic app", () => {
           handledStates: { loading: false, error: false, empty: false },
         },
       }),
-      { id: "action.delete-thing", type: "Action", context: { destructive: true } },
+      {
+        id: "action.delete-thing",
+        type: "Action",
+        context: { destructive: true },
+      },
     ],
     [
       transition("screen.root", "screen.list"),
@@ -581,12 +593,10 @@ describe("engine deduplication", () => {
   });
 
   test("a group below the threshold stays as individual findings", () => {
-    const cluster = ["/portal/a", "/portal/b"].map(
-      (route, index): Finding => ({
-        ...base,
-        target: { kind: "node", node: `screen.${index}`, route },
-      }),
-    );
+    const cluster = ["/portal/a", "/portal/b"].map((route, index): Finding => ({
+      ...base,
+      target: { kind: "node", node: `screen.${index}`, route },
+    }));
     const result = runRules([ruleEmitting(cluster, true)], {
       view: emptyView,
       entryPoints: [],

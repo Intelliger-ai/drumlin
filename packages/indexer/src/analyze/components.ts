@@ -34,7 +34,8 @@ export interface UnboundedSelect {
 
 const DESIGN_SYSTEM_DIRECTORY = /(^|\/)components\/ui\//;
 
-const SELECT_CONTROLS = /^(Select|SelectContent|NativeSelect|select|Listbox|RadioGroup)$/;
+const SELECT_CONTROLS =
+  /^(Select|SelectContent|NativeSelect|select|Listbox|RadioGroup)$/;
 
 /** Controls that already solve the scale problem, so their presence excuses it. */
 const SEARCHABLE_MARKERS = [
@@ -52,11 +53,12 @@ const SEARCHABLE_MARKERS = [
   "setsearch",
   "onsearch",
   'type="search"',
-  "placeholder=\"search",
+  'placeholder="search',
 ];
 
 /** Signals that a value was read from somewhere whose size is not knowable. */
-const DATA_SOURCE = /\b(fetch|useQuery|useSuspenseQuery|useInfiniteQuery|useSWR|getAll|findMany|select|list|query)\s*[(<]/;
+const DATA_SOURCE =
+  /\b(fetch|useQuery|useSuspenseQuery|useInfiniteQuery|useSWR|getAll|findMany|select|list|query)\s*[(<]/;
 
 /** Above this, an inline literal list stops being obviously bounded. */
 const BOUNDED_LITERAL_LIMIT = 15;
@@ -86,7 +88,10 @@ function rootElementOf(node: Node): string | undefined {
   return undefined;
 }
 
-function propsOf(sourceFile: SourceFile, componentName: string): {
+function propsOf(
+  sourceFile: SourceFile,
+  componentName: string,
+): {
   propNames: string[];
   variantValues: string[];
 } {
@@ -277,7 +282,8 @@ function fetchedCollections(sourceFile: SourceFile): Set<string> {
 
     const nameNode = declaration.getNameNode();
     if (Node.isObjectBindingPattern(nameNode)) {
-      for (const element of nameNode.getElements()) names.add(element.getName());
+      for (const element of nameNode.getElements())
+        names.add(element.getName());
       continue;
     }
     names.add(declaration.getName());

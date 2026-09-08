@@ -25,9 +25,7 @@ Options
   --format <fmt>  status: text or json
 `;
 
-export async function daemonCommand(
-  args: ParsedArgs,
-): Promise<number> {
+export async function daemonCommand(args: ParsedArgs): Promise<number> {
   const [subcommand] = args.positional;
 
   switch (subcommand) {
@@ -69,9 +67,7 @@ async function start(args: ParsedArgs): Promise<number> {
   });
 
   if (!started) {
-    process.stderr.write(
-      `Daemon did not come up. Check ${paths.logFile}\n`,
-    );
+    process.stderr.write(`Daemon did not come up. Check ${paths.logFile}\n`);
     return 1;
   }
 
@@ -153,7 +149,9 @@ async function status(args: ParsedArgs): Promise<number> {
             (workspace.branch ? ` · ${workspace.branch}` : ""),
         );
         if (workspace.pendingFiles > 0) {
-          lines.push(`    ${workspace.pendingFiles} change(s) not yet folded in`);
+          lines.push(
+            `    ${workspace.pendingFiles} change(s) not yet folded in`,
+          );
         }
         if (workspace.lastError) {
           lines.push(`    last rebuild failed: ${workspace.lastError}`);
@@ -177,8 +175,6 @@ function log(args: ParsedArgs): number {
 
   const count = Number.parseInt(flagString(args, "lines") ?? "40", 10);
   const lines = readFileSync(paths.logFile, "utf8").trimEnd().split("\n");
-  process.stdout.write(
-    `${lines.slice(-Math.max(1, count)).join("\n")}\n`,
-  );
+  process.stdout.write(`${lines.slice(-Math.max(1, count)).join("\n")}\n`);
   return 0;
 }

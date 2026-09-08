@@ -2,11 +2,7 @@ import { existsSync } from "node:fs";
 import { daemonPaths, type DaemonPaths } from "@drumlin/repo";
 // Types only. The implementation is imported on demand in `inProcess()`,
 // because loading it drags in the parser.
-import type {
-  Engine,
-  EngineMethod,
-  EngineMethods,
-} from "@drumlin/engine";
+import type { Engine, EngineMethod, EngineMethods } from "@drumlin/engine";
 import type { DaemonEventName, HandshakeResult } from "@drumlin/protocol";
 import { DaemonConnection } from "./connection.js";
 import { spawnDaemon, waitForSocket } from "./spawn.js";
@@ -24,7 +20,10 @@ export class RemoteEngine implements Engine {
 
   private constructor(
     private readonly paths: DaemonPaths,
-    private readonly onEvent?: (name: DaemonEventName, payload: unknown) => void,
+    private readonly onEvent?: (
+      name: DaemonEventName,
+      payload: unknown,
+    ) => void,
   ) {}
 
   /**
@@ -34,7 +33,9 @@ export class RemoteEngine implements Engine {
    * caller can fall back in-process. A machine where spawning fails should
    * still be able to run `drumlin check`, just slower.
    */
-  static async attach(options: AttachOptions = {}): Promise<RemoteEngine | undefined> {
+  static async attach(
+    options: AttachOptions = {},
+  ): Promise<RemoteEngine | undefined> {
     const paths = options.paths ?? daemonPaths();
     const engine = new RemoteEngine(paths, options.onEvent);
 
@@ -59,7 +60,10 @@ export class RemoteEngine implements Engine {
     params: EngineMethods[M]["params"],
   ): Promise<EngineMethods[M]["result"]> {
     const connection = this.require();
-    return (await connection.request(method, params)) as EngineMethods[M]["result"];
+    return (await connection.request(
+      method,
+      params,
+    )) as EngineMethods[M]["result"];
   }
 
   /** Fire-and-forget notification. Nothing waits for the daemon to finish. */

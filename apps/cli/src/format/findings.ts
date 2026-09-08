@@ -122,10 +122,7 @@ export function renderCounts(counts: {
   accepted: number;
   noLongerDetected: number;
 }): string {
-  const parts = [
-    `${counts.stillOpen} open`,
-    `${counts.introduced} new`,
-  ];
+  const parts = [`${counts.stillOpen} open`, `${counts.introduced} new`];
   if (counts.accepted > 0) parts.push(`${counts.accepted} accepted`);
   if (counts.noLongerDetected > 0) {
     parts.push(`${counts.noLongerDetected} no longer detected`);

@@ -76,7 +76,9 @@ export async function hookCommand(
   try {
     const input = await readInput(budget);
     const root = workspaceRoot(input, cwd);
-    const output = await withDeadline(budget, () => dispatch(event, input, root));
+    const output = await withDeadline(budget, () =>
+      dispatch(event, input, root),
+    );
     emit(output ?? {});
   } catch {
     // Deliberately silent. Diagnostics belong in `drumlin daemon log`, not in

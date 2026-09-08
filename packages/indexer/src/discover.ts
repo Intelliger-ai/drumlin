@@ -28,9 +28,7 @@ export const IGNORED_DIRECTORIES: ReadonlySet<string> = new Set([
 ]);
 
 export function isIgnoredPath(path: string): boolean {
-  return path
-    .split(sep)
-    .some((segment) => IGNORED_DIRECTORIES.has(segment));
+  return path.split(sep).some((segment) => IGNORED_DIRECTORIES.has(segment));
 }
 
 const ANALYZABLE = /\.(tsx|ts|jsx|js|mjs|cjs)$/;
@@ -77,7 +75,10 @@ function firstExisting(...candidates: string[]): string | undefined {
 /** Resolve one Next.js app from a directory known to contain a Next config. */
 export function describeApp(root: string): NextApp | undefined {
   const absolute = resolve(root);
-  const appDir = firstExisting(join(absolute, "src", "app"), join(absolute, "app"));
+  const appDir = firstExisting(
+    join(absolute, "src", "app"),
+    join(absolute, "app"),
+  );
   const pagesDir = firstExisting(
     join(absolute, "src", "pages"),
     join(absolute, "pages"),

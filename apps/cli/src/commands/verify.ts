@@ -1,7 +1,12 @@
 import { classifyCaller } from "@drumlin/model";
 import { outcomeSummary } from "@drumlin/core";
 import type { IssueVerifyReport } from "@drumlin/engine";
-import { flagBoolean, flagString, outputFormat, type ParsedArgs } from "../args.js";
+import {
+  flagBoolean,
+  flagString,
+  outputFormat,
+  type ParsedArgs,
+} from "../args.js";
 import { dim } from "../format/outline.js";
 import type { Engine } from "@drumlin/engine";
 

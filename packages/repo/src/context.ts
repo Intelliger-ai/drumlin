@@ -101,9 +101,10 @@ export function readConfig(root: string): DrumlinConfig {
   const paths = repoPaths(root);
   if (!existsSync(paths.configFile)) return { ...DEFAULT_CONFIG };
   try {
-    const parsed = parse(readFileSync(paths.configFile, "utf8")) as
-      | Record<string, unknown>
-      | null;
+    const parsed = parse(readFileSync(paths.configFile, "utf8")) as Record<
+      string,
+      unknown
+    > | null;
     const entryPoints = parsed?.["entryPoints"];
     const rules = parsed?.["rules"] as Record<string, unknown> | undefined;
     const disabled = rules?.["disabled"];

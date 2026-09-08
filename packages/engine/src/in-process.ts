@@ -253,9 +253,8 @@ export class InProcessEngine implements Engine {
     const runtime = params.observed
       ? this.runtimeFindings(params.observed, graphResult.graph)
       : [];
-    const findings = runtime.length > 0
-      ? [...run.findings, ...runtime]
-      : run.findings;
+    const findings =
+      runtime.length > 0 ? [...run.findings, ...runtime] : run.findings;
 
     // Issues are reconciled from the whole run, never from the scoped report.
     // Narrowing here would renumber issues differently depending on which
@@ -478,11 +477,13 @@ export class InProcessEngine implements Engine {
       })),
     ];
 
-    const uncertainties: Uncertainty[] = inference.questions.map((question) => ({
-      subject: question.subject,
-      question: question.question,
-      ...(question.candidates ? { candidates: question.candidates } : {}),
-    }));
+    const uncertainties: Uncertainty[] = inference.questions.map(
+      (question) => ({
+        subject: question.subject,
+        question: question.question,
+        ...(question.candidates ? { candidates: question.candidates } : {}),
+      }),
+    );
 
     const result: ContextInferResult = { beliefs, uncertainties };
 
@@ -904,9 +905,7 @@ export class InProcessEngine implements Engine {
    * wrong for the pile of them a year later, and it is how a forged acceptance
    * stays hidden. `attested` is the field worth reading.
    */
-  protected issuesAccepted(
-    params: IssuesAcceptedParams,
-  ): IssuesAcceptedResult {
+  protected issuesAccepted(params: IssuesAcceptedParams): IssuesAcceptedResult {
     const app = resolveAppFor(params);
     if (!existsSync(repoPaths(app.root).dir)) {
       throw new Error("No .drumlin/ directory, so nothing has been accepted.");
@@ -1009,7 +1008,13 @@ export class InProcessEngine implements Engine {
       },
     ];
 
-    const claimed: Issue = { ...issue, status, updatedAt: now, history, claims };
+    const claimed: Issue = {
+      ...issue,
+      status,
+      updatedAt: now,
+      history,
+      claims,
+    };
     store.write(claimed);
     store.flush();
 
@@ -1061,7 +1066,8 @@ export class InProcessEngine implements Engine {
       // were never claimed would burn a full uncached run to tell people what
       // `drumlin check` already told them.
       for (const issue of store.list()) {
-        if (issue.claims?.some((claim) => !claim.verifiedAt)) targets.push(issue);
+        if (issue.claims?.some((claim) => !claim.verifiedAt))
+          targets.push(issue);
       }
     }
 
@@ -1356,7 +1362,10 @@ export class InProcessEngine implements Engine {
         continue;
       }
       if (severityRank(finding.severity) < threshold) continue;
-      if (cone && attributeFindings([finding], cone, view).elsewhere.length > 0) {
+      if (
+        cone &&
+        attributeFindings([finding], cone, view).elsewhere.length > 0
+      ) {
         elsewhere += 1;
         continue;
       }
@@ -1438,7 +1447,8 @@ export class InProcessEngine implements Engine {
     // Caching requires `.drumlin/`, and creating it is `drumlin init`'s job
     // alone. Otherwise a read-only command leaves a directory behind and
     // silently opts the repository in to persistence it never asked for.
-    const useCache = params.cache !== false && existsSync(repoPaths(app.root).dir);
+    const useCache =
+      params.cache !== false && existsSync(repoPaths(app.root).dir);
 
     const key = computeCacheKey({
       directories: [app.appDir, app.pagesDir, app.root].filter(
@@ -1504,7 +1514,9 @@ export function resolveAppFor(params: WorkspaceOpenParams): NextApp {
  * Orientation, not analysis: an agent asking what this app is wants "there are
  * 14 screens under /admin", not a list of 89 routes it has to read.
  */
-function routeSections(view: GraphView): Array<{ prefix: string; screens: number }> {
+function routeSections(
+  view: GraphView,
+): Array<{ prefix: string; screens: number }> {
   const counts = new Map<string, number>();
 
   for (const screen of view.screens) {

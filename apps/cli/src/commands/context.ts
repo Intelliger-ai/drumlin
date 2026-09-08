@@ -1,5 +1,10 @@
 import { relative } from "node:path";
-import { flagBoolean, flagString, outputFormat, type ParsedArgs } from "../args.js";
+import {
+  flagBoolean,
+  flagString,
+  outputFormat,
+  type ParsedArgs,
+} from "../args.js";
 import { dim } from "../format/outline.js";
 import type { Engine } from "@drumlin/engine";
 

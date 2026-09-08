@@ -19,7 +19,12 @@ import { StateKindSchema } from "./graph.js";
  */
 
 /** How a navigation was triggered. */
-export const NAVIGATION_KINDS = ["visit", "click", "submit", "redirect"] as const;
+export const NAVIGATION_KINDS = [
+  "visit",
+  "click",
+  "submit",
+  "redirect",
+] as const;
 export const NavigationKindSchema = z.enum(NAVIGATION_KINDS);
 export type NavigationKind = z.infer<typeof NavigationKindSchema>;
 

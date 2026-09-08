@@ -35,7 +35,9 @@ export interface ServerOptions {
 }
 
 export function resolveRoot(env: NodeJS.ProcessEnv, cwd: string): string {
-  return env["DRUMLIN_ROOT"] ?? env["WORKSPACE_FOLDER_PATHS"]?.split(",")[0] ?? cwd;
+  return (
+    env["DRUMLIN_ROOT"] ?? env["WORKSPACE_FOLDER_PATHS"]?.split(",")[0] ?? cwd
+  );
 }
 
 /**
@@ -54,11 +56,11 @@ export function requireActivation(root: string): void {
   throw new Error(
     activation.initialised
       ? "Drumlin is set up in this project but not activated, so its tools are " +
-        "off. Ask the developer to run `drumlin activate` here. Until then, do " +
-        "not assume anything about this app's UX graph."
+          "off. Ask the developer to run `drumlin activate` here. Until then, do " +
+          "not assume anything about this app's UX graph."
       : "Drumlin is not set up in this project, so its tools are off. Ask the " +
-        "developer to run `drumlin init` and then `drumlin activate` here. " +
-        "Until then, do not assume anything about this app's UX graph.",
+          "developer to run `drumlin init` and then `drumlin activate` here. " +
+          "Until then, do not assume anything about this app's UX graph.",
   );
 }
 

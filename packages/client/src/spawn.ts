@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { createConnection } from "node:net";
-import { existsSync } from "node:fs";
+import { existsSync, realpathSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { daemonPaths, type DaemonPaths } from "@drumlin/repo";
 
@@ -11,10 +12,11 @@ import { daemonPaths, type DaemonPaths } from "@drumlin/repo";
  * that wants a warm graph starts one, detaches from it, and waits for the
  * socket to appear.
  *
- * This is the one place the client knows where the daemon lives, which is why
- * it depends on the package: something has to hold that path, and burying it in
- * an environment variable would mean auto-spawn silently not working on a
- * machine nobody configured.
+ * This is the one place the client knows where the daemon lives. It depends on
+ * the package so that a source checkout can resolve it by name, but the
+ * dependency is not what makes this work — see `resolveDaemonEntry`, which has
+ * to search, because the built CLI resolves specifiers from somewhere the
+ * dependency was never installed.
  */
 
 export interface SpawnOptions {
@@ -36,13 +38,66 @@ export function daemonCommand(): string[] {
   return entry ? [process.execPath, entry] : ["drumlind"];
 }
 
+/**
+ * The daemon executable, in whichever layout this install has.
+ *
+ * This used to be one `import.meta.resolve("@drumlin/daemon/bin")`, which was
+ * true while the CLI ran as TypeScript out of the workspace: this module lives
+ * in `packages/client`, and `packages/client/node_modules/@drumlin/daemon`
+ * exists. Bundling the CLI moved the code without moving that fact. From
+ * `apps/cli/dist/drumlin.mjs` the specifier resolves against
+ * `apps/cli/node_modules`, which never had `@drumlin/daemon` — the CLI does not
+ * depend on it, the client does.
+ *
+ * The consequence was worse than a crash. Resolution returned nothing, the
+ * caller fell back to `drumlind` on PATH, nothing is on PATH, and
+ * `RemoteEngine` treats a failed spawn as "run in-process instead". So the
+ * daemon quietly stopped existing and every command paid for a cold index,
+ * which is the entire thing the daemon was built to avoid.
+ *
+ * Hence candidates, tried nearest-first, and `argv[1]` rather than
+ * `import.meta.url`: the entry point is a real location in every layout, where
+ * a bundled module is not.
+ */
 function resolveDaemonEntry(): string | undefined {
+  for (const candidate of daemonCandidates()) {
+    if (candidate && existsSync(candidate)) return candidate;
+  }
+  return undefined;
+}
+
+function daemonCandidates(): Array<string | undefined> {
+  const entry = process.argv[1];
+  const near: string[] = [];
+
+  if (entry) {
+    const dir = dirname(realpathOf(entry));
+    near.push(
+      // Built or installed. One package carries all three executables, so
+      // `drumlind` sits beside whatever is running — which is the reason the
+      // build assembles them into one directory rather than three.
+      join(dir, "drumlind.mjs"),
+      // From source via tsx: apps/cli/bin -> apps/daemon/bin.
+      join(dir, "..", "..", "daemon", "bin", "drumlind.mjs"),
+    );
+  }
+
+  return [...near, resolveQuietly("@drumlin/daemon/bin")];
+}
+
+function resolveQuietly(specifier: string): string | undefined {
   try {
-    const resolved = import.meta.resolve("@drumlin/daemon/bin");
-    const path = fileURLToPath(resolved);
-    return existsSync(path) ? path : undefined;
+    return fileURLToPath(import.meta.resolve(specifier));
   } catch {
     return undefined;
+  }
+}
+
+function realpathOf(path: string): string {
+  try {
+    return realpathSync(path);
+  } catch {
+    return path;
   }
 }
 

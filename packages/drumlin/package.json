@@ -32,9 +32,9 @@
     "linux"
   ],
   "bin": {
-    "drumlin": "./dist/drumlin.mjs",
-    "drumlind": "./dist/drumlind.mjs",
-    "drumlin-mcp": "./dist/drumlin-mcp.mjs"
+    "drumlin": "dist/drumlin.mjs",
+    "drumlind": "dist/drumlind.mjs",
+    "drumlin-mcp": "dist/drumlin-mcp.mjs"
   },
   "files": [
     "dist"

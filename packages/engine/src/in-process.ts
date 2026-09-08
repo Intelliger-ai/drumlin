@@ -315,9 +315,17 @@ export class InProcessEngine implements Engine {
    */
   private runtimeFindings(path: string, graph: GraphDocument): Finding[] {
     if (!existsSync(path)) {
+      // Do not name a command to run here. This said "record one with
+      // `drumlin observe` first", and no `observe` command is registered — the
+      // walk and the diff are built, the browser adapter that would drive them
+      // is not. Sending someone to a command that answers `Unknown command` is
+      // worse than the missing file they started with.
       throw new Error(
-        `No observation at ${path}. Record one with \`drumlin observe\` first, ` +
-          `or drop --observed to run the static rules alone.`,
+        `No observation at ${path}.\n` +
+          `  --observed diffs a recorded browser run against the source. ` +
+          `Nothing in Drumlin records one yet, so the file has to come from ` +
+          `your own harness, in the shape of ObservedGraph in @drumlin/model.\n` +
+          `  Drop --observed to run the static rules alone.`,
       );
     }
 
@@ -579,12 +587,7 @@ export class InProcessEngine implements Engine {
     const store = new IssueStore(app.root);
     const issue = store.read(normalizeIssueId(params.id));
 
-    if (!issue) {
-      throw new Error(
-        `No issue ${params.id}. Run \`drumlin check\` to detect issues, ` +
-          `and \`drumlin init\` first if IDs are not persisting.`,
-      );
-    }
+    if (!issue) throw missingIssue(app.root, params.id);
 
     const graphResult = await this.graphGet(params);
     const permissions = readPermissions(app.root);
@@ -645,7 +648,7 @@ export class InProcessEngine implements Engine {
     const store = new IssueStore(app.root);
     const id = normalizeIssueId(params.id);
     const issue = store.read(id);
-    if (!issue) throw new Error(`No issue ${id}.`);
+    if (!issue) throw missingIssue(app.root, id);
 
     if (issue.status === "accepted") return { issue };
 
@@ -742,7 +745,7 @@ export class InProcessEngine implements Engine {
     const store = new IssueStore(app.root);
     const id = normalizeIssueId(params.id);
     const issue = store.read(id);
-    if (!issue) throw new Error(`No issue ${id}.`);
+    if (!issue) throw missingIssue(app.root, id);
 
     if (issue.status === "accepted") {
       throw new Error(`${id} is already accepted. Nothing to propose.`);
@@ -782,7 +785,7 @@ export class InProcessEngine implements Engine {
     const store = new IssueStore(app.root);
     const id = normalizeIssueId(params.id);
     const issue = store.read(id);
-    if (!issue) throw new Error(`No issue ${id}.`);
+    if (!issue) throw missingIssue(app.root, id);
 
     const now = new Date().toISOString();
     let declined = 0;
@@ -847,7 +850,7 @@ export class InProcessEngine implements Engine {
     const store = new IssueStore(app.root);
     const id = normalizeIssueId(params.id);
     const issue = store.read(id);
-    if (!issue) throw new Error(`No issue ${id}.`);
+    if (!issue) throw missingIssue(app.root, id);
 
     if (issue.status !== "accepted") {
       throw new Error(
@@ -964,7 +967,7 @@ export class InProcessEngine implements Engine {
     const store = new IssueStore(app.root);
     const id = normalizeIssueId(params.id);
     const issue = store.read(id);
-    if (!issue) throw new Error(`No issue ${id}.`);
+    if (!issue) throw missingIssue(app.root, id);
 
     const caller = params.by;
     const now = new Date().toISOString();
@@ -1051,7 +1054,7 @@ export class InProcessEngine implements Engine {
     if (params.id) {
       const id = normalizeIssueId(params.id);
       const issue = store.read(id);
-      if (!issue) throw new Error(`No issue ${id}.`);
+      if (!issue) throw missingIssue(app.root, id);
       targets.push(issue);
     } else {
       // Everything with a claim nobody has checked yet. Verifying issues that
@@ -1533,6 +1536,34 @@ function normalizeIssueId(id: string): string {
   const match = /^(?:ux-)?0*(\d+)$/i.exec(trimmed);
   if (!match?.[1]) return trimmed;
   return issueId(Number.parseInt(match[1], 10));
+}
+
+/**
+ * Why an id did not resolve to an issue.
+ *
+ * This used to be `No issue ${id}. Run \`drumlin check\` to see what exists`,
+ * which is a circle in the case that produces it most often. `check` runs
+ * without `.drumlin/` and prints real `UX-` ids; nothing stores them. So a
+ * newcomer reads an id off `check`, passes it to `accept`, and is told to run
+ * the command they just ran.
+ *
+ * The absent directory is the whole answer, so say that instead. Shared by
+ * every command that takes an id — accept, revoke, propose, decline, claim,
+ * verify — because they all reach it the same way and the diagnosis does not
+ * depend on which one asked.
+ */
+function missingIssue(root: string, id: string): Error {
+  if (!existsSync(repoPaths(root).dir)) {
+    return new Error(
+      `No issue ${id} on record. This project has no .drumlin/, so findings ` +
+        `are reported but never kept, and the ids \`drumlin check\` printed ` +
+        `do not outlive it. Run \`drumlin init\` here, then \`drumlin check\`.`,
+    );
+  }
+
+  return new Error(
+    `No issue ${id}. Run \`drumlin check\` to see what is currently on record.`,
+  );
 }
 
 /**

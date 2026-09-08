@@ -1,4 +1,6 @@
+import { unsupportedNode } from "@drumlin/model/runtime";
 import { flagBoolean, parseArgs, type ParsedArgs } from "./args.js";
+import { version } from "./version.js";
 
 /**
  * Commands are imported on demand.
@@ -16,6 +18,7 @@ Usage
   drumlin <command> [options]
 
 Commands
+  help         Show this message
   init         Create .drumlin/ so issue IDs survive across runs
   activate     Let Drumlin report findings while you code, in this project
   deactivate   Silence the editor hooks and agent tools here
@@ -40,7 +43,7 @@ Options
   --no-cache         Re-index from source, ignoring the derived cache
   --no-daemon        Run in-process instead of using the daemon
   --changed [spec]   Report only findings from changed files (default: git)
-  --observed <file>  check: also diff a recorded browser run against the source
+  --observed <file>  check: diff a browser run you recorded against the source
   --limit <n>        Cap how much is listed
   --severity <s>     Only findings at this severity or above
   --rule <ids>       Comma-separated rule IDs to run
@@ -55,6 +58,7 @@ Options
   --out <file>       export: write to a file instead of stdout
   --new              export: only issues not yet sent to that target
   -h, --help         Show this message
+  -v, --version      Print the version
 `;
 
 /** Commands whose authority comes from the terminal they were typed into. */
@@ -107,9 +111,24 @@ export async function run(
 ): Promise<number> {
   const args = parseArgs(argv);
 
-  if (args.flags.has("help") || args.flags.has("h") || !args.command) {
+  // Asking for the version or the help is a successful use of the tool, so it
+  // exits 0. `drumlin --help` used to exit 1, which is enough to fail a CI
+  // step whose whole job is checking the thing installed.
+  if (args.flags.has("version") || args.flags.has("v")) {
+    process.stdout.write(`${version()}\n`);
+    return 0;
+  }
+
+  if (args.flags.has("help") || args.flags.has("h") || args.command === "help") {
     process.stdout.write(USAGE);
-    return args.command ? 0 : 1;
+    return 0;
+  }
+
+  // Bare `drumlin` is the one usage-printing case that is not a request: the
+  // caller has not said what they want, so it stays non-zero.
+  if (!args.command) {
+    process.stdout.write(USAGE);
+    return 1;
   }
 
   const standalone = await runWithoutEngine(args.command, args, cwd);
@@ -156,42 +175,62 @@ type EngineCommand = (
   cwd: string,
 ) => Promise<number>;
 
+/**
+ * Commands that take an engine, as a table rather than a switch.
+ *
+ * A table because the set of commands then exists as data, which is what lets
+ * a test check the usage text against it. The bug that motivated this was an
+ * error message offering `drumlin observe`, a command that was never
+ * registered: the runtime walk and the diff are built, the browser adapter
+ * that would drive them is not. Nothing could have noticed, because the list
+ * of real commands was only ever the shape of a `switch`.
+ */
+const ENGINE_COMMANDS: Record<string, () => Promise<EngineCommand>> = {
+  init: async () => (await import("./commands/init.js")).initCommand,
+  graph: async () => (await import("./commands/graph.js")).graphCommand,
+  check: async () => (await import("./commands/check.js")).checkCommand,
+  context: async () => (await import("./commands/context.js")).contextCommand,
+  accept: async () => (await import("./commands/accept.js")).acceptCommand,
+  revoke: async () => (await import("./commands/accept.js")).revokeCommand,
+  propose: async () => (await import("./commands/accept.js")).proposeCommand,
+  decline: async () => (await import("./commands/accept.js")).declineCommand,
+  claim: async () => (await import("./commands/verify.js")).claimCommand,
+  verify: async () => (await import("./commands/verify.js")).verifyCommand,
+  activate: async () =>
+    (await import("./commands/activate.js")).activateCommand,
+  deactivate: async () =>
+    (await import("./commands/activate.js")).deactivateCommand,
+  export: async () => (await import("./commands/export.js")).exportCommand,
+};
+
+/** Everything `drumlin <command>` accepts, engine-backed or not. */
+export const COMMANDS: readonly string[] = [
+  "help",
+  ...Object.keys(ENGINE_COMMANDS),
+  "rules",
+  "daemon",
+  "connect",
+  "hook",
+].sort();
+
+/** The usage text, exported so a test can hold it against `COMMANDS`. */
+export const usage = (): string => USAGE;
+
 async function engineCommand(
   name: string,
 ): Promise<EngineCommand | undefined> {
-  switch (name) {
-    case "init":
-      return (await import("./commands/init.js")).initCommand;
-    case "graph":
-      return (await import("./commands/graph.js")).graphCommand;
-    case "check":
-      return (await import("./commands/check.js")).checkCommand;
-    case "context":
-      return (await import("./commands/context.js")).contextCommand;
-    case "accept":
-      return (await import("./commands/accept.js")).acceptCommand;
-    case "revoke":
-      return (await import("./commands/accept.js")).revokeCommand;
-    case "propose":
-      return (await import("./commands/accept.js")).proposeCommand;
-    case "decline":
-      return (await import("./commands/accept.js")).declineCommand;
-    case "claim":
-      return (await import("./commands/verify.js")).claimCommand;
-    case "verify":
-      return (await import("./commands/verify.js")).verifyCommand;
-    case "activate":
-      return (await import("./commands/activate.js")).activateCommand;
-    case "deactivate":
-      return (await import("./commands/activate.js")).deactivateCommand;
-    case "export":
-      return (await import("./commands/export.js")).exportCommand;
-    default:
-      return undefined;
-  }
+  return ENGINE_COMMANDS[name]?.();
 }
 
 export async function main(): Promise<void> {
+  // Before anything else, and before any import that would fail obscurely.
+  const unsupported = unsupportedNode(process.versions.node);
+  if (unsupported) {
+    process.stderr.write(`${unsupported}\n`);
+    process.exitCode = 1;
+    return;
+  }
+
   try {
     process.exitCode = await run(process.argv.slice(2), process.cwd());
   } catch (error) {

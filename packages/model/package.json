@@ -5,7 +5,8 @@
   "type": "module",
   "description": "Canonical UX Graph IR domain types. Pure: no filesystem, no parser.",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./runtime": "./src/runtime.ts"
   },
   "dependencies": {
     "zod": "^4.1.5"

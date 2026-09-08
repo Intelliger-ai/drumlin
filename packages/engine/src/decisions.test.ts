@@ -436,3 +436,60 @@ describe("accepting and proposing", () => {
     });
   });
 });
+
+/**
+ * The message you get when the id does not resolve.
+ *
+ * Worth its own tests because the old one sent a first-time reader in a
+ * circle. `check` runs without `.drumlin/` and prints real `UX-` ids, so the
+ * obvious next move is to act on one — and the answer was "run `drumlin check`
+ * to see what exists", naming the command they had just run. The absent
+ * directory was the entire explanation and went unmentioned.
+ */
+describe("an id that resolves to nothing", () => {
+  let root: string;
+  const engine = new InProcessEngine();
+
+  beforeEach(() => {
+    root = mkdtempSync(join(tmpdir(), "drumlin-missing-"));
+    cpSync(FIXTURE, root, { recursive: true });
+  });
+
+  afterEach(() => {
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it("blames the missing directory when that is the reason", async () => {
+    // Deliberately no `initRepo`: this is the state a newcomer is in.
+    const found = await engine.request("check.run", { root });
+    const printed = found.issues[0]?.id ?? "UX-0001";
+
+    await expect(
+      engine.request("issue.get", { root, id: printed }),
+    ).rejects.toThrow(/no \.drumlin\/.*drumlin init/is);
+  });
+
+  it("does not send the reader back to the command they just ran", async () => {
+    const error = await engine
+      .request("issue.get", { root, id: "UX-0001" })
+      .then(() => undefined)
+      .catch((cause: unknown) => cause as Error);
+
+    expect(error?.message).toContain("drumlin init");
+    expect(error?.message).not.toMatch(/run `drumlin check` to see/i);
+  });
+
+  it("points at check once the project is initialised", async () => {
+    // With somewhere to store issues, an unknown id really is just unknown.
+    initRepo(root);
+    await engine.request("check.run", { root });
+
+    await expect(
+      engine.request("issue.get", { root, id: "UX-9999" }),
+    ).rejects.toThrow(/drumlin check/i);
+
+    await expect(
+      engine.request("issue.get", { root, id: "UX-9999" }),
+    ).rejects.not.toThrow(/drumlin init/i);
+  });
+});

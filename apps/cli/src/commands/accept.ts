@@ -1,5 +1,6 @@
 import { createInterface } from "node:readline/promises";
 import { classifyCaller, type Issue, type IssueProposal } from "@drumlin/model";
+import { findRepoRoot } from "@drumlin/repo";
 import { flagString, outputFormat, type ParsedArgs } from "../args.js";
 import { dim } from "../format/outline.js";
 import type { Engine } from "@drumlin/engine";
@@ -53,7 +54,7 @@ export async function acceptCommand(
 
   const issue = await load(engine, args, cwd, id);
   if (!issue) {
-    process.stderr.write(`No issue ${id}. Run \`drumlin check\` to see what exists.\n`);
+    process.stderr.write(notFound(id, cwd));
     return 1;
   }
 
@@ -378,6 +379,28 @@ async function confirm(issue: Issue): Promise<boolean> {
   } finally {
     readline.close();
   }
+}
+
+/**
+ * The one not-found message a newcomer is most likely to hit.
+ *
+ * `check` works without `.drumlin/` and prints real ids, so the obvious next
+ * move is to accept one — and the old answer was "run `drumlin check` to see
+ * what exists", which is the command they had just run. Name the missing
+ * directory instead. Mirrors the engine's `missingIssue`, which covers the
+ * commands that let the engine do the lookup.
+ */
+function notFound(id: string, cwd: string): string {
+  if (findRepoRoot(cwd)) {
+    return `No issue ${id}. Run \`drumlin check\` to see what is on record.\n`;
+  }
+
+  return (
+    `No issue ${id} on record.\n\n` +
+    `  This project has no .drumlin/, so findings are reported but never\n` +
+    `  kept — the ids \`drumlin check\` printed do not outlive the run.\n\n` +
+    `  Run \`drumlin init\` here, then \`drumlin check\`.\n`
+  );
 }
 
 async function load(

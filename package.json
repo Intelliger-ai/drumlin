@@ -22,12 +22,14 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "boundaries": "node scripts/check-boundaries.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "smoke": "node scripts/smoke-pack.mjs",
     "bench:warm": "node scripts/bench-warm.mjs",
     "probe:mcp": "node scripts/probe-mcp.mjs",
     "probe:hooks": "node scripts/probe-hooks.mjs",
     "probe:loop": "node scripts/probe-loop.mjs",
-    "check": "pnpm boundaries && pnpm typecheck && pnpm test"
+    "check": "pnpm boundaries && pnpm format:check && pnpm typecheck && pnpm test"
   },
   "devDependencies": {
     "@drumlin/indexer": "workspace:*",

@@ -1,0 +1,73 @@
+name: CI
+
+# Until now the 383 tests ran only when somebody remembered to run them, which
+# is how a bundling change disabled the daemon without anyone noticing.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# A second push should cancel the first run rather than queue behind it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: check (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      # One failing version should not hide the other's result.
+      fail-fast: false
+      matrix:
+        # 22 is the floor, for node:sqlite. 24 is current, and is what most
+        # contributors will already have.
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Boundaries, types, formatting and tests. Boundaries first: it is the
+      # cheapest and the one whose failure invalidates the rest, because it
+      # means the port seam in DEC-0001 has been crossed.
+      - run: pnpm check
+
+      # Typechecks and bundles. Kept separate from `check` so a build failure
+      # is distinguishable from a test failure in the run summary.
+      - run: pnpm build
+
+  smoke:
+    # The job that would have caught the daemon regression. Everything above
+    # runs against the workspace, where `@drumlin/*` resolves through symlinks
+    # a published install does not have; this installs the tarball into an
+    # empty directory and drives the result.
+    name: packed install
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Both supported platforms, because the daemon needs Unix sockets and
+        # the paths it resolves differ enough to be worth checking on each.
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm smoke

@@ -1,0 +1,48 @@
+{
+  "name": "drumlin",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Local-first UX intelligence for AI-assisted development. Reads a Next.js app as a graph of screens, states and actions, and reports the UX problems a type checker cannot see.",
+  "keywords": [
+    "ux",
+    "next",
+    "nextjs",
+    "static-analysis",
+    "cli",
+    "mcp",
+    "cursor",
+    "ai",
+    "agent"
+  ],
+  "license": "Apache-2.0",
+  "author": "Intelliger AI",
+  "homepage": "https://github.com/Intelliger-ai/drumlin#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Intelliger-ai/drumlin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Intelliger-ai/drumlin/issues"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "bin": {
+    "drumlin": "./dist/drumlin.mjs",
+    "drumlind": "./dist/drumlind.mjs",
+    "drumlin-mcp": "./dist/drumlin-mcp.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "ts-morph": "^24.0.0",
+    "yaml": "^2.8.1",
+    "zod": "^4.1.5"
+  }
+}

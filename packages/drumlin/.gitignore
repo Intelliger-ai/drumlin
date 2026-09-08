@@ -1,0 +1,14 @@
+# This package is assembled, not written.
+#
+# `drumlin` on npm is one package carrying three executables, because the
+# workspace split is a build-time concern: the bundle inlines every
+# `@drumlin/*` import, so nothing resolves them at runtime. Shipping the three
+# together also makes the daemon lookup in packages/client structurally sound —
+# `drumlind` is always beside `drumlin` — rather than a search that can miss.
+#
+# So the only checked-in file here is the manifest. `pnpm build` writes the
+# rest: the bundles into dist/, and copies of the README and LICENSE that npm
+# needs inside the tarball to render the package page.
+dist/
+README.md
+LICENSE

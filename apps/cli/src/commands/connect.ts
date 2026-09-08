@@ -174,11 +174,11 @@ function readSkill(cliDir: string): string | undefined {
  */
 function resolveMcpBin(cliDir: string): string | undefined {
   const candidates = [
-    // Built, in this monorepo: apps/cli/dist -> apps/mcp/dist.
-    join(cliDir, "..", "..", "mcp", "dist", "drumlin-mcp.mjs"),
+    // Built or installed: one package, all three executables together.
+    join(cliDir, "drumlin-mcp.mjs"),
     // From source, via tsx: apps/cli/bin -> apps/mcp/bin.
     join(cliDir, "..", "..", "mcp", "bin", "drumlin-mcp.mjs"),
-    // Installed from a registry, where it is an ordinary dependency.
+    // A workspace where the app is an ordinary dependency.
     resolveQuietly("@drumlin/mcp/bin"),
   ];
 

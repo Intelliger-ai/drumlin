@@ -1,9 +1,15 @@
 {
-  "name": "drumlin",
+  "name": "drumlin-workspace",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Local-first UX intelligence layer for AI-assisted development",
+  "description": "Workspace root. The published package is assembled into packages/drumlin by `pnpm build`.",
+  "license": "Apache-2.0",
+  "author": "Intelliger AI",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Intelliger-ai/drumlin.git"
+  },
   "packageManager": "pnpm@10.30.1",
   "engines": {
     "node": ">=22"
@@ -16,6 +22,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "boundaries": "node scripts/check-boundaries.mjs",
+    "smoke": "node scripts/smoke-pack.mjs",
     "bench:warm": "node scripts/bench-warm.mjs",
     "probe:mcp": "node scripts/probe-mcp.mjs",
     "probe:hooks": "node scripts/probe-hooks.mjs",
@@ -26,6 +33,7 @@
     "@drumlin/indexer": "workspace:*",
     "@types/node": "^24.3.0",
     "esbuild": "^0.28.2",
+    "prettier": "^3.9.6",
     "tsx": "^4.20.3",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

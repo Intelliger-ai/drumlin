@@ -3,13 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "drumlind \u2014 the long-lived process that holds the warm graph.",
-  "bin": {
-    "drumlind": "./dist/drumlind.mjs"
-  },
+  "description": "drumlind \u2014 the long-lived process that holds the warm graph. Source only; the executable ships from packages/drumlin.",
   "exports": {
     ".": "./src/index.ts",
-    "./bin": "./dist/drumlind.mjs",
+    "./bin": "./bin/drumlind.mjs",
     "./package.json": "./package.json"
   },
   "dependencies": {
@@ -24,8 +21,5 @@
     "@drumlin/model": "workspace:*",
     "@drumlin/protocol": "workspace:*",
     "@drumlin/repo": "workspace:*"
-  },
-  "files": [
-    "dist"
-  ]
+  }
 }

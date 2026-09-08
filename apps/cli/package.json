@@ -3,13 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "The drumlin command line interface.",
-  "bin": {
-    "drumlin": "./dist/drumlin.mjs"
-  },
+  "description": "The drumlin command line interface. Source only; the executable ships from packages/drumlin.",
   "exports": {
     ".": "./src/index.ts",
-    "./bin": "./dist/drumlin.mjs",
+    "./bin": "./bin/drumlin.mjs",
     "./package.json": "./package.json"
   },
   "dependencies": {
@@ -27,8 +24,5 @@
     "@drumlin/model": "workspace:*",
     "@drumlin/protocol": "workspace:*",
     "@drumlin/repo": "workspace:*"
-  },
-  "files": [
-    "dist"
-  ]
+  }
 }

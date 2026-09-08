@@ -1,6 +1,7 @@
 node_modules/
 dist/
 *.tsbuildinfo
+*.tgz
 .DS_Store
 
 # Local derived state — rebuildable from repo + source, never committed.

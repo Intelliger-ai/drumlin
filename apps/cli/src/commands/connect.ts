@@ -107,21 +107,90 @@ export async function connectCommand(
 /**
  * Where the CLI and the MCP server actually live.
  *
- * Resolved from this module's own location, so the plugin points at the
- * checkout it was installed from rather than at whatever happens to be on PATH
- * later.
+ * Resolved from the running program rather than from this module, because
+ * there are two layouts and only one of them has modules on disk. Run from
+ * source, this file sits at `apps/cli/src/commands/` and the entry point is
+ * `apps/cli/bin/drumlin.mjs`. Run from a build, the whole CLI is one bundled
+ * file and `import.meta.url` points at the bundle — so a path relative to this
+ * module would land two directories from anywhere real.
+ *
+ * `process.argv[1]` is the entry point under both, which is also exactly what
+ * the plugin should invoke. Its real path, so that a `drumlin` symlink on PATH
+ * does not become the thing hooks depend on.
  */
 function resolveTargets(): Parameters<typeof buildPlugin>[0] | undefined {
-  const cliBin = fileURLToPath(new URL("../../bin/drumlin.mjs", import.meta.url));
-  let mcpBin: string;
+  const cliBin = realpathOf(process.argv[1] ?? "");
+  if (!existsSync(cliBin)) return undefined;
+
+  const mcpBin = resolveMcpBin(dirname(cliBin));
+  if (!mcpBin) return undefined;
+
+  const skill = readSkill(dirname(cliBin));
+  if (skill === undefined) return undefined;
+
+  return { node: stableNodePath(), cliBin, mcpBin, skill };
+}
+
+/**
+ * The agent skill, from wherever this install keeps it.
+ *
+ * Copied into `dist/` by the build, so a built or published CLI carries its
+ * own copy and does not reach back into a checkout that may not be there.
+ */
+function readSkill(cliDir: string): string | undefined {
+  const candidates = [
+    join(cliDir, "skills", "drumlin", "SKILL.md"),
+    join(
+      cliDir,
+      "..",
+      "..",
+      "..",
+      "integrations",
+      "cursor",
+      "skills",
+      "drumlin",
+      "SKILL.md",
+    ),
+    resolveQuietly("@drumlin/cursor/skill"),
+  ];
+
+  for (const path of candidates) {
+    if (!path || !existsSync(path)) continue;
+    try {
+      return readFileSync(path, "utf8");
+    } catch {
+      continue;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * The MCP server, whichever layout we are in.
+ *
+ * Tried in order rather than branched on a build-time flag, so that a checkout
+ * which has been built and a checkout which has not both work, and neither
+ * needs to know which it is.
+ */
+function resolveMcpBin(cliDir: string): string | undefined {
+  const candidates = [
+    // Built, in this monorepo: apps/cli/dist -> apps/mcp/dist.
+    join(cliDir, "..", "..", "mcp", "dist", "drumlin-mcp.mjs"),
+    // From source, via tsx: apps/cli/bin -> apps/mcp/bin.
+    join(cliDir, "..", "..", "mcp", "bin", "drumlin-mcp.mjs"),
+    // Installed from a registry, where it is an ordinary dependency.
+    resolveQuietly("@drumlin/mcp/bin"),
+  ];
+
+  return candidates.find((path) => path && existsSync(path));
+}
+
+function resolveQuietly(specifier: string): string | undefined {
   try {
-    mcpBin = fileURLToPath(import.meta.resolve("@drumlin/mcp/bin"));
+    return fileURLToPath(import.meta.resolve(specifier));
   } catch {
     return undefined;
   }
-
-  if (!existsSync(cliBin) || !existsSync(mcpBin)) return undefined;
-  return { node: stableNodePath(), cliBin, mcpBin };
 }
 
 /**

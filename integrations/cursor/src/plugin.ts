@@ -1,6 +1,3 @@
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-
 /**
  * The Cursor plugin, as files.
  *
@@ -24,6 +21,15 @@ export interface PluginTargets {
   cliBin: string;
   /** Absolute path to the MCP server entry point. */
   mcpBin: string;
+  /**
+   * The agent skill, as text.
+   *
+   * Passed in rather than read from beside this module, because there is no
+   * "beside this module" once the CLI is bundled — the reference resolved to a
+   * path inside `dist/` that had never existed. Reading it is the caller's
+   * problem, which is also where the knowledge of the layout already lives.
+   */
+  skill: string;
 }
 
 export interface PluginFile {
@@ -39,7 +45,7 @@ export function buildPlugin(targets: PluginTargets): PluginFile[] {
     },
     { path: "hooks/hooks.json", contents: json(hooks(targets)) },
     { path: "mcp.json", contents: json(mcp(targets)) },
-    { path: "skills/drumlin/SKILL.md", contents: skill() },
+    { path: "skills/drumlin/SKILL.md", contents: targets.skill },
   ];
 }
 
@@ -126,12 +132,6 @@ function mcp(targets: PluginTargets): unknown {
   };
 }
 
-function skill(): string {
-  return readFileSync(
-    fileURLToPath(new URL("../skills/drumlin/SKILL.md", import.meta.url)),
-    "utf8",
-  );
-}
 
 function json(value: unknown): string {
   return `${JSON.stringify(value, null, 2)}\n`;

@@ -41,11 +41,22 @@ Node 22+ and pnpm.
 git clone git@github.com:Intelliger-ai/drumlin.git
 cd drumlin
 pnpm install
-pnpm --filter @drumlin/cli link --global
+pnpm build
+ln -s "$PWD/apps/cli/dist/drumlin.mjs" ~/.local/bin/drumlin
 ```
 
-There is no build step yet, so the linked command runs the TypeScript sources
-through `tsx` and needs this checkout to stay on disk.
+`pnpm build` typechecks, then bundles the three executables into `dist/` with
+esbuild. It is worth doing rather than running the sources through `tsx`:
+startup drops from about 170ms to about 40ms, which matters because the
+`afterFileEdit` hook runs on every write an agent makes.
+
+The bundle keeps its dynamic imports split into chunks rather than inlining
+them, so `drumlin hook file-edit` still does not load the rule engine and
+ts-morph in order to post a filename to a socket. A single-file bundle
+measured *slower* than no build at all.
+
+For development, `apps/cli/bin/drumlin.mjs` runs the TypeScript directly and
+always reflects the working tree.
 
 ## Use it
 
@@ -153,6 +164,7 @@ by `pnpm boundaries` rather than by convention.
 
 ```bash
 pnpm check    # boundaries, typecheck, tests
+pnpm build    # typecheck, then bundle the three executables
 ```
 
 ## Status
@@ -163,8 +175,7 @@ identity matching across renames, and a runtime diff of the inferred graph
 against observed browser behaviour.
 
 Not yet: the Playwright adapter that produces those observations against a real
-browser, a compiled build so the CLI installs without this checkout, and
-frameworks other than Next.js.
+browser, publishing to a registry, and frameworks other than Next.js.
 
 ## License
 

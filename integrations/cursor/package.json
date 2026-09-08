@@ -7,5 +7,9 @@
   "exports": {
     ".": "./src/plugin.ts",
     "./skill": "./skills/drumlin/SKILL.md"
-  }
+  },
+  "files": [
+    "skills",
+    "src"
+  ]
 }

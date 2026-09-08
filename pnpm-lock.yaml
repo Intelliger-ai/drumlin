@@ -14,6 +14,9 @@ importers:
       '@types/node':
         specifier: ^24.3.0
         version: 24.13.3
+      esbuild:
+        specifier: ^0.28.2
+        version: 0.28.2
       tsx:
         specifier: ^4.20.3
         version: 4.23.13
@@ -26,6 +29,16 @@ importers:
 
   apps/cli:
     dependencies:
+      ts-morph:
+        specifier: ^24.0.0
+        version: 24.0.0
+      yaml:
+        specifier: ^2.8.1
+        version: 2.9.0
+      zod:
+        specifier: ^4.1.5
+        version: 4.5.4
+    devDependencies:
       '@drumlin/client':
         specifier: workspace:*
         version: link:../../packages/client
@@ -56,6 +69,16 @@ importers:
 
   apps/daemon:
     dependencies:
+      ts-morph:
+        specifier: ^24.0.0
+        version: 24.0.0
+      yaml:
+        specifier: ^2.8.1
+        version: 2.9.0
+      zod:
+        specifier: ^4.1.5
+        version: 4.5.4
+    devDependencies:
       '@drumlin/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -77,6 +100,19 @@ importers:
 
   apps/mcp:
     dependencies:
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.30.0
+        version: 1.30.0(zod@4.5.4)
+      ts-morph:
+        specifier: ^24.0.0
+        version: 24.0.0
+      yaml:
+        specifier: ^2.8.1
+        version: 2.9.0
+      zod:
+        specifier: ^4.1.5
+        version: 4.5.4
+    devDependencies:
       '@drumlin/client':
         specifier: workspace:*
         version: link:../../packages/client
@@ -89,12 +125,6 @@ importers:
       '@drumlin/repo':
         specifier: workspace:*
         version: link:../../packages/repo
-      '@modelcontextprotocol/sdk':
-        specifier: ^1.30.0
-        version: 1.30.0(zod@4.5.4)
-      zod:
-        specifier: ^4.1.5
-        version: 4.5.4
 
   integrations/cursor: {}
 

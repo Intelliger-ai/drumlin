@@ -5,18 +5,26 @@
   "type": "module",
   "description": "Local stdio MCP server: four read-only tools over the daemon.",
   "bin": {
-    "drumlin-mcp": "./bin/drumlin-mcp.mjs"
+    "drumlin-mcp": "./dist/drumlin-mcp.mjs"
   },
   "exports": {
     ".": "./src/index.ts",
-    "./bin": "./bin/drumlin-mcp.mjs"
+    "./bin": "./dist/drumlin-mcp.mjs",
+    "./package.json": "./package.json"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "ts-morph": "^24.0.0",
+    "yaml": "^2.8.1",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
     "@drumlin/client": "workspace:*",
     "@drumlin/engine": "workspace:*",
     "@drumlin/model": "workspace:*",
-    "@drumlin/repo": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.30.0",
-    "zod": "^4.1.5"
-  }
+    "@drumlin/repo": "workspace:*"
+  },
+  "files": [
+    "dist"
+  ]
 }

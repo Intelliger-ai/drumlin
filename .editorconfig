@@ -1,0 +1,23 @@
+# Matches .prettierrc.json. Both exist because Prettier does not format
+# everything an editor opens — YAML workflows, .nvmrc, this file — and an
+# editor that disagrees about indentation on those produces diffs nobody meant
+# to make.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+# Trailing whitespace is a line break in Markdown.
+trim_trailing_whitespace = false
+
+# Inputs to rules that read source text. Left exactly as written, for the same
+# reason .prettierignore skips them.
+[packages/indexer/fixtures/**]
+trim_trailing_whitespace = false
+insert_final_newline = false

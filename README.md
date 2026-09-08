@@ -1,5 +1,9 @@
 # Drumlin
 
+[![CI](https://github.com/Intelliger-ai/drumlin/actions/workflows/ci.yml/badge.svg)](https://github.com/Intelliger-ai/drumlin/actions/workflows/ci.yml)
+[![Node](https://img.shields.io/badge/node-%3E%3D22-blue)](https://nodejs.org)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+
 Drumlin reads a Next.js codebase, builds a graph of the product's screens,
 states, actions and transitions, and runs deterministic rules over that graph
 to find user-experience problems that no single file reveals.
@@ -30,35 +34,36 @@ UX-0005  medium  /patients/[id] exists but nothing links to it, so it can only b
     flow.orphan · graph · confidence 0.80
 ```
 
-Everything is local. No source leaves the machine, and there is no account,
-no server and no model call in the analysis path.
+Everything is local. No source leaves the machine, and there is no account, no
+server and no model call in the analysis path.
+
+## Requirements
+
+**Node 22 or newer**, because the derived cache uses `node:sqlite`. Drumlin
+says so and names your version rather than failing somewhere deeper.
+
+**Next.js**, App Router or Pages Router. Mixed repositories are fine — the
+graph records which router each route came from. Extraction is done with
+`ts-morph`, so a JavaScript-only app parses but yields a much thinner graph.
+
+**macOS or Linux.** The daemon speaks over a Unix domain socket, so Windows
+needs WSL; install inside the WSL filesystem rather than across `/mnt/c`.
+
+Nothing else is required to run `drumlin check`. The editor integration wants
+Cursor; the rest of the tool does not care what you write code in.
 
 ## Install
 
-Node 22+ and pnpm.
-
 ```bash
-git clone git@github.com:Intelliger-ai/drumlin.git
-cd drumlin
-pnpm install
-pnpm build
-ln -s "$PWD/apps/cli/dist/drumlin.mjs" ~/.local/bin/drumlin
+npm install -g drumlin
 ```
 
-`pnpm build` typechecks, then bundles the three executables into `dist/` with
-esbuild. It is worth doing rather than running the sources through `tsx`:
-startup drops from about 170ms to about 40ms, which matters because the
-`afterFileEdit` hook runs on every write an agent makes.
+> **Not published yet.** The package is built and verified — `pnpm smoke` packs
+> it, installs it into a clean directory and drives it — but the first release
+> is not on the registry, so the command above will 404 until it is. Use the
+> source install below in the meantime; it produces the same three executables.
 
-The bundle keeps its dynamic imports split into chunks rather than inlining
-them, so `drumlin hook file-edit` still does not load the rule engine and
-ts-morph in order to post a filename to a socket. A single-file bundle
-measured _slower_ than no build at all.
-
-For development, `apps/cli/bin/drumlin.mjs` runs the TypeScript directly and
-always reflects the working tree.
-
-## Use it
+Then, in any Next.js app:
 
 ```bash
 cd your-next-app
@@ -73,6 +78,58 @@ drumlin check     # analyse and report
 identity baseline, config. Commit it, because that is what makes issue numbers
 and decisions survive across machines and branches. `.drumlin/cache/` is
 derived and already ignored.
+
+Skipping `drumlin init` is allowed and sometimes what you want — `check` runs
+fine without it. But nothing is stored, so the `UX-` numbers it prints last
+only as long as the output, and no decision about them can be recorded.
+
+### From source
+
+```bash
+git clone https://github.com/Intelliger-ai/drumlin.git
+cd drumlin
+pnpm install
+pnpm build
+ln -s "$PWD/packages/drumlin/dist/drumlin.mjs" ~/.local/bin/drumlin
+```
+
+`~/.local/bin` is not on the default `PATH` on macOS and may not exist. Create
+it and add it, or link into a directory already on your `PATH`.
+
+`pnpm build` typechecks, then bundles the three executables into
+`packages/drumlin/dist/`. That directory is the npm package: one package
+carrying `drumlin`, `drumlind` and `drumlin-mcp` together, which is also what
+lets the CLI find its own daemon without searching for it.
+
+For development, `apps/cli/bin/drumlin.mjs` runs the TypeScript directly
+through `tsx` and always reflects the working tree. It is slower to start,
+which matters only for the editor hooks.
+
+## Commands
+
+| Command              | What it does                                                   |
+| -------------------- | -------------------------------------------------------------- |
+| `drumlin init`       | Create `.drumlin/` so issue IDs survive across runs            |
+| `drumlin check`      | Report UX findings. `--changed` limits it to what you touched  |
+| `drumlin graph`      | Dump the graph as a readable outline or JSON                   |
+| `drumlin context`    | Propose a role and permission model, and say what is unknown   |
+| `drumlin rules`      | List the active rules                                          |
+| `drumlin activate`   | Let Drumlin report findings while you code, in this project    |
+| `drumlin deactivate` | Silence the editor hooks and agent tools here                  |
+| `drumlin accept`     | Record a finding as an intentional deviation (human, at a tty) |
+| `drumlin revoke`     | Undo an acceptance, or list what is currently silenced         |
+| `drumlin propose`    | Make the case for accepting one; a human decides               |
+| `drumlin decline`    | Turn down a proposal, leaving the issue open                   |
+| `drumlin claim`      | Report a fix and have it checked                               |
+| `drumlin verify`     | Re-derive from source; the only way to resolve an issue        |
+| `drumlin export`     | Write issues out for Linear or GitHub                          |
+| `drumlin connect`    | Install the Drumlin plugin into a coding agent                 |
+| `drumlin daemon`     | Manage the background daemon: `start`, `stop`, `status`        |
+
+`drumlin --help` lists every flag. Useful ones across commands: `--app` to pick
+an app in a monorepo, `--format json` for anything that consumes the output,
+`--severity` to raise the floor, `--fail-on` to exit non-zero in CI, and
+`--no-daemon` to run cold in one process.
 
 ## The ten rules
 
@@ -106,12 +163,22 @@ drumlin connect cursor   # install the plugin, once per machine
 drumlin activate         # switch it on, per project
 ```
 
+Two things are needed between them, and neither is Drumlin's to do:
+
+1. **Turn on "Allow local plugin imports"** in Cursor's dashboard settings.
+   Local plugins are behind that flag, and without it the hooks are installed
+   but never fire.
+2. **Restart Cursor**, so it reads the new hooks and MCP declaration.
+
 The second command is the point. A plugin installs once and its hooks fire in
 every workspace you open, which would make "I want this on this project" and
 "I want this reading every repository I own" the same decision. Until you run
 `drumlin activate`, the hooks and the agent's tools stay silent, and because
 the flag lives in the committed config, turning it on is a reviewable diff
 rather than local state on one laptop.
+
+`drumlin daemon status` after opening a workspace is how you tell it is live: a
+warm workspace means the hooks reached the daemon.
 
 ## Who is allowed to make a finding go away
 
@@ -143,6 +210,60 @@ So the surface is split by what each action costs if it is wrong:
 `drumlin export` renders open issues as Linear CSV, a `gh issue create` script,
 or Markdown.
 
+## Troubleshooting
+
+**`drumlin: command not found` after installing globally.** npm's global bin
+directory is not on your `PATH`. `npm prefix -g` prints the prefix; add its
+`bin` subdirectory. With the source install, the same applies to
+`~/.local/bin`, which macOS does not put on `PATH` by default.
+
+**"Drumlin needs Node 22 or newer".** Exactly what it says, and the message
+names the version you are on. `node:sqlite` arrived in Node 22 and the derived
+cache uses it.
+
+**"No Next.js app found at or beneath ."** Drumlin looks for a `next.config.*`
+beside an `app/` or `pages/` directory. Run it from the app, or point at it with
+`--app apps/web`.
+
+**"Found 3 Next.js apps. Choose one with --app".** Deliberate. Analysing an
+arbitrary one produces a report that looks plausible and describes a different
+product, so it lists them and stops.
+
+**Every run prints different `UX-` numbers.** There is no `.drumlin/` to keep
+them in. Run `drumlin init` and commit the directory.
+
+**The hooks never fire in Cursor.** In order: "Allow local plugin imports"
+enabled, Cursor restarted, `drumlin activate` run in that project. Then
+`drumlin daemon status` — no warm workspace means nothing has reached the
+daemon yet.
+
+**Analysis seems slow.** Check the daemon is being used: `drumlin daemon
+status` should list your workspace as warm. Without it every command re-indexes
+from cold. `--no-daemon` forces that deliberately, which is worth trying if you
+suspect a stale index.
+
+**`flow.orphan` reports a route that is reached by emailed link or bookmark.**
+Nothing in the source links to it, which is all Drumlin can see. List it under
+`entryPoints` in `.drumlin/config.yaml` and it becomes reachable by definition.
+
+**A rule is wrong about your code.** Two honest answers. If it is wrong in
+general, disable it in `.drumlin/config.yaml` under `rules.disabled`. If it is
+wrong about this one case, `drumlin accept` it with a reason — that is what
+acceptance is for, and the reason is what makes it reviewable later.
+
+## Uninstall
+
+```bash
+drumlin daemon stop
+npm uninstall -g drumlin
+rm -rf ~/.cursor/plugins/local/drumlin   # if you ran `drumlin connect cursor`
+rm -rf ~/Library/Caches/drumlin          # macOS
+rm -rf ~/.local/state/drumlin            # Linux, unless XDG says otherwise
+```
+
+`.drumlin/` in your projects is yours — it holds the decisions people made, so
+nothing removes it for you.
+
 ## Layout
 
 ```
@@ -153,6 +274,7 @@ packages/repo       the .drumlin/ contract
 packages/engine     the methods every surface calls
 packages/protocol   the daemon wire format
 packages/client     talking to the daemon
+packages/drumlin    the assembled npm package; built, not written
 apps/cli            drumlin
 apps/daemon         drumlind, a warm index behind a unix socket
 apps/mcp            the read-only MCP server
@@ -163,9 +285,12 @@ integrations/cursor the plugin
 by `pnpm boundaries` rather than by convention.
 
 ```bash
-pnpm check    # boundaries, typecheck, tests
-pnpm build    # typecheck, then bundle the three executables
+pnpm check    # boundaries, formatting, typecheck, tests
+pnpm build    # typecheck, then assemble the package
+pnpm smoke    # pack it, install it somewhere clean, and drive the result
 ```
+
+[CONTRIBUTING.md](CONTRIBUTING.md) covers the rest.
 
 ## Status
 
@@ -175,7 +300,7 @@ identity matching across renames, and a runtime diff of the inferred graph
 against observed browser behaviour.
 
 Not yet: the Playwright adapter that produces those observations against a real
-browser, publishing to a registry, and frameworks other than Next.js.
+browser, the first npm release, and frameworks other than Next.js.
 
 ## License
 

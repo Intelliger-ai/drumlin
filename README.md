@@ -58,10 +58,8 @@ Cursor; the rest of the tool does not care what you write code in.
 npm install -g drumlin
 ```
 
-> **Not published yet.** The package is built and verified — `pnpm smoke` packs
-> it, installs it into a clean directory and drives it — but the first release
-> is not on the registry, so the command above will 404 until it is. Use the
-> source install below in the meantime; it produces the same three executables.
+Needs Node 22 or newer. The package carries all three executables —
+`drumlin`, `drumlind` and `drumlin-mcp` — so there is nothing else to install.
 
 Then, in any Next.js app:
 
@@ -300,8 +298,41 @@ identity matching across renames, and a runtime diff of the inferred graph
 against observed browser behaviour.
 
 Not yet: the Playwright adapter that produces those observations against a real
-browser, the first npm release, and frameworks other than Next.js.
+browser, and frameworks other than Next.js.
+
+## Disclaimer
+
+**No warranty. No liability. Use entirely at your own risk.**
+
+Drumlin is provided as is. The authors, contributors, and Intelliger AI accept
+**no responsibility and no liability of any kind whatsoever** for anything
+arising from its use, to the maximum extent permitted by law.
+
+The analysis is heuristic and wrong in both directions. It misses real
+problems — a clean report is not evidence that an application is free of
+defects — and it reports problems that are not real. Severity and confidence
+are editorial judgements encoded in rules, not measurements. Every finding
+needs human judgement before it is acted on, and none of this substitutes for
+testing, code review, QA, or usability research with real users.
+
+The controls over who may accept, claim, or resolve an issue are **workflow
+safeguards, not security boundaries.** Caller classification is best-effort
+and can be defeated. Recorded provenance reflects what the software could
+observe, not what actually happened, and must not be relied on for audit,
+compliance, or assurance.
+
+Drumlin is **not an accessibility audit and not a compliance tool.** Using it
+does not make software conformant with WCAG, the ADA, Section 508, the
+European Accessibility Act, or any other standard or law. It is not a security
+tool and does not look for vulnerabilities.
+
+Not affiliated with or endorsed by Vercel, Next.js, Anthropic, OpenAI, Cursor,
+Linear, GitHub, or any other organisation named here.
+
+Full terms in [DISCLAIMER.md](DISCLAIMER.md), which you should read before
+using this.
 
 ## License
 
-Apache-2.0. See [LICENSE](LICENSE).
+Apache-2.0. See [LICENSE](LICENSE). Sections 7 and 8 disclaim warranty and
+limit liability, and apply in full.
